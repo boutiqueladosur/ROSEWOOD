@@ -79,7 +79,6 @@
     .product-card:hover .product-image img{transform:scale(1.04)}
     .product-category{position:absolute;top:14px;left:14px;z-index:2;background:rgba(250,248,244,.94);color:#625548;padding:7px 10px;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
     
-    /* Estilos para las miniaturas de los 4 lados */
     .product-thumbnails {
       display: flex;
       gap: 6px;
@@ -469,7 +468,6 @@
       imageWrap.append(mainImg, category);
       imageContainer.appendChild(imageWrap);
 
-      // Si hay más de una imagen (hasta 4), creamos la barra de miniaturas
       if (images.length > 1) {
         const thumbsWrap = document.createElement("div");
         thumbsWrap.className = "product-thumbnails";
@@ -662,14 +660,13 @@
     function sendOrderToWhatsApp(event) {
       event.preventDefault();
       if (!cart.length) return showToast("Agrega al menos una cartera antes de enviar el pedido.");
-      if (!TELEFONO_WHATSAPP || TELEFONO_WHATSAPP === "56912345678") {
-        return showToast("Configura primero el número real de WhatsApp en el código.");
-      }
+      
       const name = $("client-name").value.trim();
       const location = $("client-location").value.trim();
       const phone = $("client-phone").value.trim();
       const notes = $("client-notes").value.trim();
       if (!name || !location) return showToast("Completa tu nombre y ciudad o dirección de envío.");
+      
       let message = "👜 *NUEVO PEDIDO - ROSEWOOD*\n\n";
       message += `👤 *Cliente:* ${name}\n📍 *Envío:* ${location}\n`;
       if (phone) message += `📱 *Teléfono:* ${phone}\n`;
@@ -685,6 +682,7 @@
       if (cart.some(item => item.precioNum === 0)) message += "\nHay productos cuyo precio debe confirmarse.\n";
       message += `\n💰 *Total estimado de productos:* ${money(total)}\n`;
       message += "El envío se coordina por separado. ¡Gracias!";
+      
       const url = `https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(message)}`;
       window.open(url, "_blank", "noopener,noreferrer");
     }
@@ -702,10 +700,6 @@
     $("order-form").addEventListener("submit", sendOrderToWhatsApp);
     $("whatsapp-help").addEventListener("click", event => {
       event.preventDefault();
-      if (TELEFONO_WHATSAPP === "56912345678") {
-        showToast("Configura primero el número real de WhatsApp en el código.");
-        return;
-      }
       window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent("Hola, quisiera consultar por las carteras disponibles en Rosewood.")}`, "_blank", "noopener,noreferrer");
     });
     $("year").textContent = new Date().getFullYear();
