@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <!-- Importamos PapaParse para procesar CSV sin errores -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
     :root {
       --ink:#24221f; --muted:#77716a; --paper:#faf8f4; --white:#fff;
@@ -278,9 +280,6 @@
     const STORAGE_KEY = "rosewood_cart_v1";
     const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80";
     
-    const CATALOGO_RESPALDO = [
-      { id: "BOLS-1", nombre: "Bolso Milano Cuero", precio: "$29.990", precio_anterior: "", descuento: "", categoria: "BOLSO", descripcion: "Elegante bolso de mano en ecocuero de alta durabilidad con detalles metálicos dorados.", imagen1: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80" }
-    ];
     let productosData = [];
     let cart = loadSavedCart();
     let activeCategory = "todos";
@@ -290,9 +289,11 @@
     const money = value => new Intl.NumberFormat("es-CL", {
       style: "currency", currency: "CLP", maximumFractionDigits: 0
     }).format(value);
+
     function normalizeText(value) {
       return String(value ?? "").trim().toLocaleLowerCase("es-CL");
     }
+
     function safeImageUrl(value) {
       const raw = String(value || "").trim();
       if (!raw) return "";
@@ -301,6 +302,7 @@
         return ["https:", "http:"].includes(url.protocol) ? url.href : "";
       } catch { return ""; }
     }
+
     function parsePriceNumber(value) {
       if (typeof value === "number") return Number.isFinite(value) ? value : 0;
       let text = String(value ?? "").trim();
@@ -318,6 +320,7 @@
       const number = Number(text);
       return Number.isFinite(number) && number >= 0 ? Math.round(number) : 0;
     }
+
     function loadSavedCart() {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
@@ -327,95 +330,88 @@
         ) : [];
       } catch { return []; }
     }
+
     function saveCart() {
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch {}
     }
-    function parseCSV(text) {
-      const rows = [];
-      let row = [], cell = "", quoted = false;
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        if (char === '"') {
-          if (quoted && text[i + 1] === '"') { cell += '"'; i++; }
-          else quoted = !quoted;
-        } else if (char === "," && !quoted) {
-          row.push(cell.trim()); cell = "";
-        } else if ((char === "\n" || char === "\r") && !quoted) {
-          if (char === "\r" && text[i + 1] === "\n") i++;
-          row.push(cell.trim());
-          if (row.some(value => value !== "")) rows.push(row);
-          row = []; cell = "";
-        } else {
-          cell += char;
-        }
-      }
-      row.push(cell.trim());
-      if (row.some(value => value !== "")) rows.push(row);
-      if (rows.length < 2) return [];
-      const headers = rows.shift().map(header => normalizeText(header).replace(/^\uFEFF/, "").trim());
-      return rows.map((values, index) => {
-        const item = { id_auto: `CARTERA-${index + 1}` };
-        headers.forEach((header, i) => { if (header) item[header] = values[i] ?? ""; });
-        return item;
-      });
-    }
-    
-    // Mapeo exacto basado en las cabeceras de tu Google Sheet: ID, NOMBRE, PRECIO, CATEGORIA, DESCRIPCION, PRECIO ANTERIOR, DESCUENTO, IMAGEN1
+
+    // Funciones de extracción de campos limpias adaptadas a tus columnas
     function getProductId(product) { 
-      return String(product.id || product.id_auto || product.codigo || product[Object.keys(product)[0]] || "").trim(); 
+      return String(product.id || product.ID || product.codigo || "").trim(); 
     }
     function getProductName(product) { 
-      return String(product.nombre || product.name || product.titulo || "").trim(); 
+      return String(product.nombre || product.NOMBRE || product.name || "").trim(); 
     }
     function getProductPrice(product) { 
-      return String(product.precio || product.price || product.valor || "").trim(); 
+      return String(product.precio || product.PRECIO || product.valor || "").trim(); 
     }
     function getProductOldPrice(product) { 
-      return String(product["precio anterior"] || product.precio_anterior || product.precioanterior || product.old_price || "").trim(); 
+      return String(product["precio anterior"] || product["PRECIO ANTERIOR"] || product.precio_anterior || "").trim(); 
     }
     function getProductDiscount(product) { 
-      return String(product.descuento || product.discount || "").trim(); 
+      return String(product.descuento || product.DESCUENTO || "").trim(); 
     }
     function getProductCategory(product) { 
-      return String(product.categoria || product.category || product.tipo || "Carteras").trim() || "Carteras"; 
+      return String(product.categoria || product.CATEGORIA || product.tipo || "Carteras").trim() || "Carteras"; 
     }
     function getProductDescription(product) { 
-      return String(product.descripcion || product.description || product.detalle || "").trim(); 
+      return String(product.descripcion || product.DESCRIPCION || product.detalle || "").trim(); 
     }
     
     function getProductImages(product) {
       const rawImgs = [
-        product.imagen1 || product.imagen || product.image || product.foto || product.img1 || "",
-        product.imagen2 || product.foto2 || product.img2 || "",
-        product.imagen3 || product.foto3 || product.img3 || "",
-        product.imagen4 || product.foto4 || product.img4 || ""
+        product.imagen1 || product.IMAGEN1 || product.imagen || product.image || "",
+        product.imagen2 || product.IMAGEN2 || "",
+        product.imagen3 || product.IMAGEN3 || "",
+        product.imagen4 || product.IMAGEN4 || ""
       ];
       const validImgs = rawImgs.map(safeImageUrl).filter(Boolean);
       return validImgs.length > 0 ? validImgs : [PLACEHOLDER_IMAGE];
     }
 
-    async function loadCatalog() {
-      try {
-        const response = await fetch(GOOGLE_SHEET_CSV_URL, { cache: "no-store" });
-        if (!response.ok) throw new Error(`Respuesta HTTP ${response.status}`);
-        const csvText = await response.text();
-        const rows = parseCSV(csvText);
-        const parsedProducts = rows.filter(p => getProductName(p) && getProductName(p).toLowerCase() !== "cartera");
-        
-        if (parsedProducts.length > 0) {
-          productosData = parsedProducts;
-        } else {
-          throw new Error("CSV vacío o sin datos válidos");
+    // Usamos PapaParse con proxy antibloqueo CORS integrado
+    function loadCatalog() {
+      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(GOOGLE_SHEET_CSV_URL);
+      
+      Papa.parse(proxyUrl, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          if (results.data && results.data.length > 0) {
+            productosData = results.data.filter(p => getProductName(p));
+          }
+          $("loader").hidden = true;
+          renderCategoryButtons();
+          renderProducts();
+          syncCartWithCatalog();
+        },
+        error: function(err) {
+          console.warn("Error cargando vía proxy, intentando lectura directa...", err);
+          fallbackDirectLoad();
         }
-      } catch (error) {
-        console.warn("Utilizando datos de respaldo local por error de red:", error);
-        productosData = CATALOGO_RESPALDO;
-      } finally {
-        $("loader").hidden = true;
-        renderCategoryButtons();
-        renderProducts();
-        syncCartWithCatalog();
-      }
+      });
+    }
+
+    function fallbackDirectLoad() {
+      Papa.parse(GOOGLE_SHEET_CSV_URL, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          if (results.data && results.data.length > 0) {
+            productosData = results.data.filter(p => getProductName(p));
+          }
+          $("loader").hidden = true;
+          renderCategoryButtons();
+          renderProducts();
+          syncCartWithCatalog();
+        },
+        error: function(err) {
+          console.error("No se pudo conectar con Google Sheets:", err);
+          $("loader").innerHTML = "<p style='color:var(--danger)'>No se pudo conectar con el catálogo en línea. Verifique su conexión.</p>";
+        }
+      });
     }
 
     function renderCategoryButtons() {
@@ -734,4 +730,21 @@
     $("open-cart").addEventListener("click", () => toggleCart(true));
     $("close-cart").addEventListener("click", () => toggleCart(false));
     $("cart-modal").addEventListener("click", event => {
-      if (
+      if (event.target === $("cart-modal")) toggleCart(false);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !$("cart-modal").classList.contains("hidden")) toggleCart(false);
+    });
+    $("search-input").addEventListener("input", renderProducts);
+    $("sort-select").addEventListener("change", renderProducts);
+    $("order-form").addEventListener("submit", sendOrderToWhatsApp);
+    $("whatsapp-help").addEventListener("click", event => {
+      event.preventDefault();
+      window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent("Hola, quisiera consultar por las carteras disponibles in Rosewood.")}`, "_blank", "noopener,noreferrer");
+    });
+    $("year").textContent = new Date().getFullYear();
+    updateCartUI();
+    loadCatalog();
+  </script>
+</body>
+</html>
