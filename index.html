@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
     :root {
       --ink:#24221f; --muted:#77716a; --paper:#faf8f4; --white:#fff;
@@ -273,9 +272,12 @@
     </section>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
   <script>
     const TELEFONO_WHATSAPP = "56935707722";
-    const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRB0h9qoVHLNbpG7Fr6z8HWwkg_8yMhWejJb1JF_LjSVbFt9LDD853TVCo19JvJ4xMXm-QEVmPV7KuP/pub?gid=0&single=true&output=csv";
+    // Endpoint directo oficial de Google Visualization para evitar CORS y problemas de proxies
+    const SHEET_ID = "1vRB0h9qoVHLNbpG7Fr6z8HWwkg_8yMhWejJb1JF_LjSVbFt9LDD853TVCo19JvJ4xMXm-QEVmPV7KuP";
+    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-${SHEET_ID}/gviz/tq?tqx=out:json`;
     const STORAGE_KEY = "rosewood_cart_v1";
     const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80";
     
@@ -333,6 +335,3 @@
     function saveCart() {
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch {}
     }
-
-    // Buscador robusto para encontrar las propiedades sin importar mayúsculas o espacios
-    function getProp(obj, keys) {
