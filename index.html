@@ -81,4 +81,676 @@
     .catalog-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:11px;color:var(--muted)}
     .product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px 22px}
     .product-card{background:#fff;min-width:0;border:1px solid #eee8e0;transition:transform .25s,box-shadow .25s;display:flex;flex-direction:column}
-    .product-card:hover{transform:translateY(-
+    .product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+    .product-image-container{position:relative;background:#f0ebe4}
+    .product-image{height:280px;position:relative;overflow:hidden}
+    .product-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+    .product-card:hover .product-image img{transform:scale(1.04)}
+    .product-category{position:absolute;top:14px;left:14px;z-index:2;background:rgba(250,248,244,.94);color:#625548;padding:7px 10px;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+    
+    .product-thumbnails {
+      display: flex;
+      gap: 6px;
+      padding: 8px 12px;
+      background: #faf8f4;
+      border-top: 1px solid #eee8e0;
+      overflow-x: auto;
+    }
+    .thumb-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0;
+      overflow: hidden;
+      background: #fff;
+      opacity: 0.6;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .thumb-btn.active, .thumb-btn:hover {
+      opacity: 1;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+    .product-info{padding:18px 18px 16px;display:flex;flex-direction:column;flex:1;text-align:center;}
+    .product-title{font-family:"Playfair Display",serif;font-size:17px;font-weight:500;margin:0 0 12px}
+    .product-description{font-size:11px;color:var(--muted);line-height:1.7;margin:0 0 10px;min-height:38px}
+    .product-bottom{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid #f0ebe5}
+    
+    .product-price-box {display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;}
+    .product-price-old {
+      font-size: 13px; 
+      color: #777; 
+      text-decoration: line-through;
+      text-decoration-color: var(--danger);
+      -webkit-text-decoration-color: var(--danger);
+    }
+    .product-price {font-size:15px;font-weight:700;color:var(--danger);}
+    .product-discount-label {font-size:13px;font-weight:700;color:var(--danger);letter-spacing:.05em;}
+
+    .add-btn{background:var(--ink);color:white;border:0;padding:10px 18px;border-radius:3px;font-size:10px;display:flex;align-items:center;gap:8px;transition:.2s;white-space:nowrap;justify-content:center;width:100%}
+    .add-btn:hover{background:var(--accent)}
+    .empty-state{grid-column:1/-1;text-align:center;padding:65px 20px;background:white;border:1px solid var(--line);color:var(--muted)}
+    .empty-state i{font-size:27px;color:var(--accent);margin-bottom:15px}
+    .empty-state h3{font-family:"Playfair Display",serif;color:var(--ink);font-size:24px;font-weight:500;margin-bottom:8px}
+    .loader{text-align:center;padding:60px 20px;color:var(--muted);font-size:12px}
+    .spinner{width:27px;height:27px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 13px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .footer{background:#25231f;color:#f5f0e8;padding:42px 26px 25px}
+    .footer-inner{max-width:1240px;margin:auto;display:flex;justify-content:space-between;gap:25px;align-items:center}
+    .footer .brand-name{font-size:19px}
+    .footer p{font-size:11px;color:#c0b7ab;line-height:1.8;margin:8px 0 0}
+    .footer-bottom{max-width:1240px;margin:27px auto 0;border-top:1px solid #49443d;padding-top:17px;font-size:10px;color:#a69d91;display:flex;justify-content:space-between;gap:12px}
+    .whatsapp-float{position:fixed;bottom:22px;right:22px;z-index:20;background:#1f8e56;color:white;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;box-shadow:0 8px 25px #0002;font-size:23px}
+    .modal{position:fixed;inset:0;z-index:60;background:rgba(25,22,19,.5);display:flex;justify-content:flex-end;opacity:1;transition:opacity .2s}
+    .modal.hidden{display:none}
+    .cart-panel{width:min(100%,440px);height:100%;background:var(--paper);display:flex;flex-direction:column;box-shadow:-15px 0 45px #0001;animation:slidein .25s ease}
+    @keyframes slidein{from{transform:translateX(30px);opacity:.7}to{transform:translateX(0);opacity:1}}
+    .cart-header{display:flex;align-items:center;justify-content:space-between;padding:23px 24px;border-bottom:1px solid var(--line)}
+    .cart-header h2{font-family:"Playfair Display",serif;font-size:24px;font-weight:500;margin:0}
+    .close-btn{border:0;background:transparent;font-size:20px;color:var(--muted);padding:5px}
+    .cart-items{padding:8px 24px;overflow-y:auto;flex:1}
+    .cart-empty{text-align:center;color:var(--muted);padding:55px 10px;font-size:12px;line-height:1.8}
+    .cart-empty i{font-size:27px;color:var(--accent);display:block;margin-bottom:14px}
+    .cart-item{display:grid;grid-template-columns:74px 1fr auto;gap:13px;padding:16px 0;border-bottom:1px solid var(--line);align-items:center}
+    .cart-item img{width:74px;height:82px;object-fit:cover;background:#eee5da}
+    .cart-item-name{font-family:"Playfair Display",serif;font-size:15px;margin-bottom:6px}
+    .cart-item-price{font-size:11px;color:var(--accent);font-weight:700}
+    .quantity-control{display:flex;align-items:center;gap:10px;margin-top:10px}
+    .quantity-control button{border:1px solid var(--line);background:white;width:25px;height:25px}
+    .quantity-control span{font-size:11px;min-width:10px;text-align:center}
+    .remove-btn{border:0;background:transparent;color:#968b80;font-size:11px;text-decoration:underline;margin-top:7px;padding:0}
+    .cart-item-total{font-size:11px;font-weight:700;white-space:nowrap;align-self:start;padding-top:4px}
+    .cart-footer{border-top:1px solid var(--line);padding:19px 24px 23px;background:#fff}
+    .total-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:15px}
+    .total-row strong{font-size:19px}
+    .cart-form{display:grid;gap:9px}
+    .cart-form input,.cart-form textarea{width:100%;border:1px solid var(--line);background:var(--paper);padding:12px;border-radius:3px;font-size:11px;outline:none}
+    .cart-form input:focus,.cart-form textarea:focus{border-color:var(--accent)}
+    .cart-form textarea{resize:vertical;min-height:62px}
+    .send-btn{border:0;background:#218653;color:white;padding:14px;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;justify-content:center;align-items:center;gap:9px;margin-top:3px}
+    .send-btn:hover{background:#176b41}
+    .form-note{font-size:9px;color:var(--muted);line-height:1.5;margin:2px 0 0}
+    .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:12px 18px;font-size:12px;z-index:100;opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow)}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    body.modal-open{overflow:hidden}
+    @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product-image{height:260px}.nav-links{gap:13px}}
+    @media(max-width:620px){
+      .announcement{font-size:9px;letter-spacing:.08em}.nav{min-height:68px;padding:12px 16px}.brand{min-width:0;gap:8px}.brand-mark{width:34px;height:34px;font-size:18px}.brand-name{font-size:16px}.brand-sub{font-size:8px}.nav-links{display:none}.cart-open{padding:10px 12px;font-size:11px;gap:7px}
+      .hero{padding:38px 16px 27px}
+      .benefit-row{padding:14px 12px;gap:10px}.benefit{font-size:9px;flex-direction:column;text-align:center;gap:6px}.benefit i{font-size:15px}
+      .catalog{padding:53px 16px 65px}.section-heading{align-items:start;flex-direction:column;gap:9px;margin-bottom:22px}.section-heading h2{font-size:34px}.toolbar{align-items:stretch;flex-direction:column}.search-wrap{max-width:none}.sort-select{width:100%}.categories{flex-wrap:nowrap;overflow-x:auto;padding-bottom:5px}.category-btn{flex-shrink:0}.product-grid{gap:12px}.product-image{height:200px}.product-info{padding:13px 12px}.product-title{font-size:16px}.product-description{font-size:10px;min-height:0}.product-bottom{align-items:center;gap:11px;margin-top:14px;padding-top:12px}.add-btn{width:100%;justify-content:center;padding:11px 7px}
+      .footer-inner{align-items:flex-start;flex-direction:column}.footer-bottom{flex-direction:column}.whatsapp-float{bottom:15px;right:15px;width:48px;height:48px}
+      .cart-header{padding:19px}.cart-items{padding:5px 19px}.cart-footer{padding:15px 19px 18px}
+    }
+    @media(max-width:360px){.product-grid{grid-template-columns:1fr}.product-image{height:260px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <div class="announcement">Detalles que enamoran · Tu próxima cartera favorita te espera</div>
+  <header class="header">
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="#" class="brand" aria-label="Rosewood, inicio">
+        <span class="brand-mark">R</span>
+        <span><span class="brand-name">ROSEWOOD</span><span class="brand-sub">Accesorios con estilo</span></span>
+      </a>
+      <div class="nav-links"><a href="#coleccion">Colección</a><a href="#nosotros">Nuestra boutique</a></div>
+      <button class="cart-open" id="open-cart" type="button"><i class="fa-solid fa-bag-shopping"></i><span>Mi pedido</span><span class="badge" id="cart-badge">0</span></button>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">Colección seleccionada</div>
+        <div class="hero-ribbon">
+          <h1>Tu estilo, tu esencia.</h1>
+        </div>
+        <p class="hero-copy">Carteras y accesorios para acompañarte en cada momento. Encuentra ese diseño especial que combina contigo y prepara tu pedido de forma fácil y directa.</p>
+        <a class="primary-link" href="#coleccion">Descubrir colección <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="hero-note"><span><i class="fa-solid fa-check"></i> Atención personalizada</span><span><i class="fa-brands fa-whatsapp"></i> Pedidos por WhatsApp</span></div>
+      </div>
+    </section>
+
+    <section class="benefits" aria-label="Ventajas de comprar con nosotros">
+      <div class="benefit-row">
+        <div class="benefit"><i class="fa-solid fa-heart"></i><span>Diseños elegidos con cariño</span></div>
+        <div class="benefit"><i class="fa-solid fa-comments"></i><span>Atención directa y personalizada</span></div>
+        <div class="benefit"><i class="fa-solid fa-truck-fast"></i><span>Coordinamos tu entrega contigo</span></div>
+      </div>
+    </section>
+    <section class="catalog" id="coleccion">
+      <div class="section-heading">
+        <div><div class="eyebrow">Encuentra tu favorita</div><h2>La colección</h2></div>
+        <p>Diseños para cada ocasión, cada día.</p>
+      </div>
+      <div class="toolbar">
+        <label class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="search-input" type="search" placeholder="Buscar por nombre o descripción..." aria-label="Buscar carteras"></label>
+        <select class="sort-select" id="sort-select" aria-label="Ordenar productos">
+          <option value="featured">Ordenar: recomendados</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+          <option value="name">Nombre: A a Z</option>
+        </select>
+      </div>
+      <div class="categories" id="category-filters" aria-label="Filtrar por categoría"></div>
+      <div class="catalog-meta"><span id="product-count">Preparando colección…</span><span id="active-filter-label"></span></div>
+      <div class="loader" id="loader"><div class="spinner"></div>Estamos preparando la colección para ti…</div>
+      <div class="product-grid" id="product-grid"></div>
+    </section>
+  </main>
+  <footer class="footer" id="nosotros">
+    <div class="footer-inner">
+      <div class="brand"><span class="brand-mark" style="border-color:#c8a987;color:#c8a987">R</span><span><span class="brand-name">ROSEWOOD</span><span class="brand-sub" style="color:#c0b7ab">Accesorios con estilo</span></span></div>
+      <p>¿Tienes dudas sobre un modelo? Escríbenos.<br>Estaremos felices de ayudarte a elegir.</p>
+    </div>
+    <div class="footer-bottom"><span>© <span id="year"></span> Rosewood. Todos los derechos reservados.</span><span>Hecho con estilo y dedicación.</span></div>
+  </footer>
+  <a class="whatsapp-float" id="whatsapp-help" href="#" aria-label="Consultar por WhatsApp" title="Consultar por WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+  <div class="modal hidden" id="cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+    <section class="cart-panel">
+      <div class="cart-header"><h2 id="cart-title">Tu pedido</h2><button class="close-btn" id="close-cart" type="button" aria-label="Cerrar pedido"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="cart-items" id="cart-items"></div>
+      <div class="cart-footer">
+        <div class="total-row"><span>Total estimado</span><strong id="cart-total-price">$0</strong></div>
+        <form class="cart-form" id="order-form">
+          <input id="client-name" name="name" type="text" placeholder="Tu nombre *" autocomplete="name" required maxlength="100">
+          <input id="client-location" name="location" type="text" placeholder="Ciudad o dirección de envío *" autocomplete="street-address" required maxlength="180">
+          <input id="client-phone" name="phone" type="tel" placeholder="Teléfono de contacto (opcional)" autocomplete="tel" maxlength="30">
+          <textarea id="client-notes" name="notes" placeholder="Color preferido, consultas o detalles (opcional)" maxlength="500"></textarea>
+          <button class="send-btn" type="submit"><i class="fa-brands fa-whatsapp"></i> Enviar pedido por WhatsApp</button>
+          <p class="form-note">El pedido se enviará a WhatsApp para confirmar disponibilidad, forma de pago y despacho. El envío no está incluido en el total estimado.</p>
+        </form>
+      </div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const TELEFONO_WHATSAPP = "56935707722";
+    const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRB0h9qoVHLNbpG7Fr6z8HWwkg_8yMhWejJb1JF_LjSVbFt9LDD853TVCo19JvJ4xMXm-QEVmPV7KuP/pub?gid=0&single=true&output=csv";
+    const STORAGE_KEY = "rosewood_cart_v1";
+    const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80";
+    
+    const CATALOGO_RESPALDO = [
+      { id: "BOLS-1", nombre: "Bolso Milano Cuero", precio: "$29.990", precio_anterior: "", descuento: "", categoria: "BOLSO", descripcion: "Elegante bolso de mano en ecocuero de alta durabilidad con detalles metálicos dorados.", imagen1: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80", imagen2: "", imagen3: "", imagen4: "" }
+    ];
+    let productosData = [];
+    let cart = loadSavedCart();
+    let activeCategory = "todos";
+    let toastTimer;
+    
+    const $ = id => document.getElementById(id);
+    const money = value => new Intl.NumberFormat("es-CL", {
+      style: "currency", currency: "CLP", maximumFractionDigits: 0
+    }).format(value);
+    function normalizeText(value) {
+      return String(value ?? "").trim().toLocaleLowerCase("es-CL");
+    }
+    function safeImageUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      try {
+        const url = new URL(raw, window.location.href);
+        return ["https:", "http:"].includes(url.protocol) ? url.href : "";
+      } catch { return ""; }
+    }
+    function parsePriceNumber(value) {
+      if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+      let text = String(value ?? "").trim();
+      if (!text) return 0;
+      text = text.replace(/[^\d,.-]/g, "");
+      if (text.includes(".") && text.includes(",")) {
+        text = text.lastIndexOf(",") > text.lastIndexOf(".")
+          ? text.replace(/\./g, "").replace(",", ".")
+          : text.replace(/,/g, "");
+      } else if (/\.\d{3}$/.test(text) || /,\d{3}$/.test(text)) {
+        text = text.replace(/[.,]/g, "");
+      } else {
+        text = text.replace(",", ".");
+      }
+      const number = Number(text);
+      return Number.isFinite(number) && number >= 0 ? Math.round(number) : 0;
+    }
+    function loadSavedCart() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return Array.isArray(saved) ? saved.filter(item =>
+          item && typeof item.id === "string" && Number.isInteger(item.quantity) &&
+          item.quantity > 0 && item.quantity <= 99
+        ) : [];
+      } catch { return []; }
+    }
+    function saveCart() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch {}
+    }
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], cell = "", quoted = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (char === '"') {
+          if (quoted && text[i + 1] === '"') { cell += '"'; i++; }
+          else quoted = !quoted;
+        } else if (char === "," && !quoted) {
+          row.push(cell.trim()); cell = "";
+        } else if ((char === "\n" || char === "\r") && !quoted) {
+          if (char === "\r" && text[i + 1] === "\n") i++;
+          row.push(cell.trim());
+          if (row.some(value => value !== "")) rows.push(row);
+          row = []; cell = "";
+        } else {
+          cell += char;
+        }
+      }
+      row.push(cell.trim());
+      if (row.some(value => value !== "")) rows.push(row);
+      if (rows.length < 2) return [];
+      const headers = rows.shift().map(header => normalizeText(header).replace(/^\uFEFF/, "").trim());
+      return rows.map((values, index) => {
+        const item = { id_auto: `CARTERA-${index + 1}` };
+        headers.forEach((header, i) => { if (header) item[header] = values[i] ?? ""; });
+        return item;
+      });
+    }
+    
+    // Mapeo flexible de columnas para leer id, nombre, precio, etc. sin importar variaciones de mayúsculas
+    function getProductId(product) { 
+      return String(product.id || product.id_auto || product.codigo || product[Object.keys(product)[0]] || "").trim(); 
+    }
+    function getProductName(product) { 
+      return String(product.nombre || product.name || product.titulo || "").trim(); 
+    }
+    function getProductPrice(product) { 
+      return String(product.precio || product.price || product.valor || "").trim(); 
+    }
+    function getProductOldPrice(product) { 
+      return String(product.precio_anterior || product.precioanterior || product.old_price || "").trim(); 
+    }
+    function getProductDiscount(product) { 
+      return String(product.descuento || product.discount || "").trim(); 
+    }
+    function getProductCategory(product) { 
+      return String(product.categoria || product.category || product.tipo || "Carteras").trim() || "Carteras"; 
+    }
+    function getProductDescription(product) { 
+      return String(product.descripcion || product.description || product.detalle || "").trim(); 
+    }
+    
+    function getProductImages(product) {
+      const rawImgs = [
+        product.imagen1 || product.imagen || product.image || product.foto || product.img1 || "",
+        product.imagen2 || product.foto2 || product.img2 || "",
+        product.imagen3 || product.foto3 || product.img3 || "",
+        product.imagen4 || product.foto4 || product.img4 || ""
+      ];
+      const validImgs = rawImgs.map(safeImageUrl).filter(Boolean);
+      return validImgs.length > 0 ? validImgs : [PLACEHOLDER_IMAGE];
+    }
+
+    async function loadCatalog() {
+      try {
+        // Usamos un proxy CORS público y seguro para evitar bloqueos del navegador al leer Google Sheets
+        const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(GOOGLE_SHEET_CSV_URL);
+        const response = await fetch(proxyUrl, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Respuesta HTTP ${response.status}`);
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+        const parsedProducts = rows.filter(p => getProductName(p) && getProductName(p).toLowerCase() !== "cartera");
+        
+        if (parsedProducts.length > 0) {
+          productosData = parsedProducts;
+        } else {
+          throw new Error("CSV vacío o sin datos válidos");
+        }
+      } catch (error) {
+        console.warn("Utilizando datos de respaldo local por error de red/CORS:", error);
+        productosData = CATALOGO_RESPALDO;
+      } finally {
+        $("loader").hidden = true;
+        renderCategoryButtons();
+        renderProducts();
+        syncCartWithCatalog();
+      }
+    }
+
+    function renderCategoryButtons() {
+      const container = $("category-filters");
+      container.replaceChildren();
+      const categories = [...new Set(productosData.map(getProductCategory))]
+        .filter(Boolean).sort((a, b) => a.localeCompare(b, "es"));
+      const all = ["todos", ...categories];
+      all.forEach(category => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "category-btn" + (category === activeCategory ? " active" : "");
+        button.textContent = category === "todos" ? "Todas las carteras" : category;
+        button.setAttribute("aria-pressed", String(category === activeCategory));
+        button.addEventListener("click", () => {
+          activeCategory = category;
+          renderCategoryButtons();
+          renderProducts();
+        });
+        container.appendChild(button);
+      });
+    }
+
+    function getVisibleProducts() {
+      const query = normalizeText($("search-input").value);
+      let visible = productosData.filter(product => {
+        const matchesCategory = activeCategory === "todos" || getProductCategory(product).toLowerCase() === activeCategory.toLowerCase();
+        const searchable = normalizeText(`${getProductName(product)} ${getProductDescription(product)} ${getProductCategory(product)}`);
+        return matchesCategory && (!query || searchable.includes(query));
+      });
+      const sort = $("sort-select").value;
+      if (sort === "price-asc") visible.sort((a, b) => parsePriceNumber(getProductPrice(a)) - parsePriceNumber(getProductPrice(b)));
+      if (sort === "price-desc") visible.sort((a, b) => parsePriceNumber(getProductPrice(b)) - parsePriceNumber(getProductPrice(a)));
+      if (sort === "name") visible.sort((a, b) => getProductName(a).localeCompare(getProductName(b), "es"));
+      return visible;
+    }
+
+    function renderProducts() {
+      const grid = $("product-grid");
+      const products = getVisibleProducts();
+      grid.replaceChildren();
+      $("product-count").textContent = `${products.length} ${products.length === 1 ? "producto disponible" : "productos disponibles"}`;
+      $("active-filter-label").textContent = activeCategory === "todos" ? "" : `Categoría: ${activeCategory}`;
+      if (!products.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.innerHTML = '<i class="fa-solid fa-bag-shopping"></i><h3>No encontramos resultados</h3><p>Prueba con otra búsqueda o selecciona una categoría diferente.</p>';
+        grid.appendChild(empty);
+        return;
+      }
+      products.forEach(product => grid.appendChild(createProductCard(product)));
+    }
+
+    function createProductCard(product) {
+      const card = document.createElement("article");
+      card.className = "product-card";
+      
+      const images = getProductImages(product);
+      
+      const imageContainer = document.createElement("div");
+      imageContainer.className = "product-image-container";
+      
+      const imageWrap = document.createElement("div");
+      imageWrap.className = "product-image";
+      
+      const mainImg = document.createElement("img");
+      mainImg.src = images[0];
+      mainImg.alt = getProductName(product);
+      mainImg.loading = "lazy";
+      mainImg.decoding = "async";
+      mainImg.onerror = () => { mainImg.onerror = null; mainImg.src = PLACEHOLDER_IMAGE; };
+      
+      const category = document.createElement("span");
+      category.className = "product-category";
+      category.textContent = getProductCategory(product);
+      
+      imageWrap.append(mainImg, category);
+      imageContainer.appendChild(imageWrap);
+      if (images.length > 1) {
+        const thumbsWrap = document.createElement("div");
+        thumbsWrap.className = "product-thumbnails";
+        
+        images.forEach((imgUrl, index) => {
+          const thumbBtn = document.createElement("button");
+          thumbBtn.type = "button";
+          thumbBtn.className = "thumb-btn" + (index === 0 ? " active" : "");
+          
+          const thumbImg = document.createElement("img");
+          thumbImg.src = imgUrl;
+          thumbImg.alt = `${getProductName(product)} vista ${index + 1}`;
+          thumbImg.loading = "lazy";
+          
+          thumbBtn.appendChild(thumbImg);
+          thumbBtn.addEventListener("click", () => {
+            mainImg.src = imgUrl;
+            thumbsWrap.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
+            thumbBtn.classList.add("active");
+          });
+          
+          thumbsWrap.appendChild(thumbBtn);
+        });
+        imageContainer.appendChild(thumbsWrap);
+      }
+      const info = document.createElement("div");
+      info.className = "product-info";
+      
+      const title = document.createElement("h3");
+      title.className = "product-title";
+      title.textContent = getProductName(product);
+      
+      const description = document.createElement("p");
+      description.className = "product-description";
+      description.textContent = getProductDescription(product);
+      
+      const bottom = document.createElement("div");
+      bottom.className = "product-bottom";
+      
+      const priceBox = document.createElement("div");
+      priceBox.className = "product-price-box";
+
+      const rawPrice = getProductPrice(product);
+      const numericPrice = parsePriceNumber(rawPrice);
+      const rawOldPrice = getProductOldPrice(product);
+      const numericOldPrice = parsePriceNumber(rawOldPrice);
+      const discountText = getProductDiscount(product);
+
+      // Precio anterior tachado con línea roja
+      if (rawOldPrice) {
+        const oldPriceEl = document.createElement("span");
+        oldPriceEl.className = "product-price-old";
+        oldPriceEl.textContent = numericOldPrice ? money(numericOldPrice) : rawOldPrice;
+        priceBox.appendChild(oldPriceEl);
+      }
+
+      // Precio actual en rojo
+      const price = document.createElement("span");
+      price.className = "product-price";
+      price.textContent = rawPrice ? (numericPrice ? money(numericPrice) : rawPrice) : "Consultar";
+      priceBox.appendChild(price);
+
+      // Etiqueta de descuento
+      if (discountText) {
+        const discEl = document.createElement("span");
+        discEl.className = "product-discount-label";
+        discEl.textContent = discountText;
+        priceBox.appendChild(discEl);
+      }
+      
+      const add = document.createElement("button");
+      add.type = "button";
+      add.className = "add-btn";
+      add.innerHTML = '<i class="fa-solid fa-plus"></i><span>Añadir</span>';
+      add.setAttribute("aria-label", `Añadir ${getProductName(product)} al pedido`);
+      add.addEventListener("click", () => addToCart(getProductId(product)));
+      
+      bottom.append(priceBox, add);
+      info.append(title, description, bottom);
+      card.append(imageContainer, info);
+      return card;
+    }
+
+    function addToCart(productId) {
+      const product = productosData.find(p => getProductId(p) === String(productId));
+      if (!product) return;
+      const images = getProductImages(product);
+      const existing = cart.find(item => item.id === String(productId));
+      if (existing) {
+        if (existing.quantity >= 99) return showToast("Puedes añadir hasta 99 unidades por producto.");
+        existing.quantity++;
+      } else {
+        cart.push({
+          id: String(productId),
+          nombre: getProductName(product),
+          precioRaw: getProductPrice(product),
+          precioNum: parsePriceNumber(getProductPrice(product)),
+          imagen: images[0],
+          quantity: 1
+        });
+      }
+      saveCart();
+      updateCartUI();
+      showToast(`${getProductName(product)} añadido al pedido`);
+    }
+
+    function updateQuantity(productId, delta) {
+      const item = cart.find(p => p.id === String(productId));
+      if (!item) return;
+      item.quantity += delta;
+      if (item.quantity <= 0) cart = cart.filter(p => p.id !== String(productId));
+      if (item.quantity > 99) item.quantity = 99;
+      saveCart();
+      updateCartUI();
+    }
+
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== String(productId));
+      saveCart();
+      updateCartUI();
+      showToast("Producto eliminado del pedido");
+    }
+
+    function updateCartUI() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      $("cart-badge").textContent = count;
+      $("cart-badge").setAttribute("aria-label", `${count} productos en el pedido`);
+      $("cart-total-price").textContent = money(cart.reduce((sum, item) => sum + item.precioNum * item.quantity, 0));
+      const container = $("cart-items");
+      container.replaceChildren();
+      if (!cart.length) {
+        const empty = document.createElement("div");
+        empty.className = "cart-empty";
+        empty.innerHTML = '<i class="fa-solid fa-bag-shopping"></i>Tu pedido está vacío.<br>Agrega tus carteras favoritas para comenzar.';
+        container.appendChild(empty);
+        return;
+      }
+      cart.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "cart-item";
+        const img = document.createElement("img");
+        img.src = safeImageUrl(item.imagen) || PLACEHOLDER_IMAGE;
+        img.alt = item.nombre;
+        img.onerror = () => { img.onerror = null; img.src = PLACEHOLDER_IMAGE; };
+        const details = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "cart-item-name";
+        name.textContent = item.nombre;
+        const price = document.createElement("div");
+        price.className = "cart-item-price";
+        price.textContent = item.precioNum ? money(item.precioNum) : (item.precioRaw || "Precio por confirmar");
+        const controls = document.createElement("div");
+        controls.className = "quantity-control";
+        const minus = document.createElement("button");
+        minus.type = "button"; minus.textContent = "−"; minus.setAttribute("aria-label", `Restar una unidad de ${item.nombre}`);
+        minus.addEventListener("click", () => updateQuantity(item.id, -1));
+        const qty = document.createElement("span"); qty.textContent = item.quantity;
+        const plus = document.createElement("button");
+        plus.type = "button"; plus.textContent = "+"; plus.setAttribute("aria-label", `Agregar una unidad de ${item.nombre}`);
+        plus.addEventListener("click", () => updateQuantity(item.id, 1));
+        controls.append(minus, qty, plus);
+        const remove = document.createElement("button");
+        remove.type = "button"; remove.className = "remove-btn"; remove.textContent = "Eliminar";
+        remove.addEventListener("click", () => removeFromCart(item.id));
+        details.append(name, price, controls, remove);
+        const total = document.createElement("div");
+        total.className = "cart-item-total";
+        total.textContent = item.precioNum ? money(item.precioNum * item.quantity) : "";
+        row.append(img, details, total);
+        container.appendChild(row);
+      });
+    }
+
+    function toggleCart(forceOpen) {
+      const modal = $("cart-modal");
+      const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : modal.classList.contains("hidden");
+      modal.classList.toggle("hidden", !shouldOpen);
+      document.body.classList.toggle("modal-open", shouldOpen);
+      if (shouldOpen) $("close-cart").focus();
+      else $("open-cart").focus();
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+    }
+
+    function syncCartWithCatalog() {
+      cart = cart.map(item => {
+        const product = productosData.find(p => getProductId(p) === item.id);
+        if (!product) return item;
+        const images = getProductImages(product);
+        return {
+          ...item,
+          nombre: getProductName(product),
+          precioRaw: getProductPrice(product),
+          precioNum: parsePriceNumber(getProductPrice(product)),
+          imagen: images[0]
+        };
+      });
+      saveCart();
+      updateCartUI();
+    }
+
+    function sendOrderToWhatsApp(event) {
+      event.preventDefault();
+      if (!cart.length) return showToast("Agrega al menos una cartera antes de enviar el pedido.");
+      
+      const name = $("client-name").value.trim();
+      const location = $("client-location").value.trim();
+      const phone = $("client-phone").value.trim();
+      const notes = $("client-notes").value.trim();
+      if (!name || !location) return showToast("Completa tu nombre y ciudad o dirección de envío.");
+      
+      let message = "👜 *NUEVO PEDIDO - ROSEWOOD*\n\n";
+      message += `👤 *Cliente:* ${name}\n📍 *Envío:* ${location}\n`;
+      if (phone) message += `📱 *Teléfono:* ${phone}\n`;
+      if (notes) message += `📝 *Notas:* ${notes}\n`;
+      message += "\n🛍️ *Detalle del pedido:*\n";
+      cart.forEach((item, index) => {
+        const price = item.precioNum ? money(item.precioNum) : (item.precioRaw || "Por confirmar");
+        message += `${index + 1}. [${item.id}] ${item.nombre} x${item.quantity} — ${price}`;
+        if (item.precioNum) message += ` = ${money(item.precioNum * item.quantity)}`;
+        message += "\n";
+      });
+      const total = cart.reduce((sum, item) => sum + item.precioNum * item.quantity, 0);
+      if (cart.some(item => item.precioNum === 0)) message += "\nHay productos cuyo precio debe confirmarse.\n";
+      message += `\n💰 *Total estimado de productos:* ${money(total)}\n`;
+      message += "El envío se coordina por separado. ¡Gracias!";
+      
+      const url = `https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    $("open-cart").addEventListener("click", () => toggleCart(true));
+    $("close-cart").addEventListener("click", () => toggleCart(false));
+    $("cart-modal").addEventListener("click", event => {
+      if (event.target === $("cart-modal")) toggleCart(false);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !$("cart-modal").classList.contains("hidden")) toggleCart(false);
+    });
+    $("search-input").addEventListener("input", renderProducts);
+    $("sort-select").addEventListener("change", renderProducts);
+    $("order-form").addEventListener("submit", sendOrderToWhatsApp);
+    $("whatsapp-help").addEventListener("click", event => {
+      event.preventDefault();
+      window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent("Hola, quisiera consultar por las carteras disponibles en Rosewood.")}`, "_blank", "noopener,noreferrer");
+    });
+    $("year").textContent = new Date().getFullYear();
+    updateCartUI();
+    loadCatalog();
+  </script>
+</body>
+</html>
