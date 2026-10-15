@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <!-- Importamos PapaParse para procesar CSV sin errores -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
     :root {
@@ -335,41 +334,39 @@
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch {}
     }
 
-    // Funciones de extracción de campos limpias adaptadas a tus columnas
-    function getProductId(product) { 
-      return String(product.id || product.ID || product.codigo || "").trim(); 
+    // Buscador robusto de propiedades sin importar mayúsculas, minúsculas o espacios adicionales
+    function getProp(obj, keys) {
+      if (!obj) return "";
+      const lowerKeys = Object.keys(obj).map(k => ({ original: k, clean: k.trim().toLowerCase() }));
+      for (const k of keys) {
+        const target = k.trim().toLowerCase();
+        const found = lowerKeys.find(item => item.clean === target);
+        if (found && obj[found.original] !== undefined) {
+          return String(obj[found.original]).trim();
+        }
+      }
+      return "";
     }
-    function getProductName(product) { 
-      return String(product.nombre || product.NOMBRE || product.name || "").trim(); 
-    }
-    function getProductPrice(product) { 
-      return String(product.precio || product.PRECIO || product.valor || "").trim(); 
-    }
-    function getProductOldPrice(product) { 
-      return String(product["precio anterior"] || product["PRECIO ANTERIOR"] || product.precio_anterior || "").trim(); 
-    }
-    function getProductDiscount(product) { 
-      return String(product.descuento || product.DESCUENTO || "").trim(); 
-    }
-    function getProductCategory(product) { 
-      return String(product.categoria || product.CATEGORIA || product.tipo || "Carteras").trim() || "Carteras"; 
-    }
-    function getProductDescription(product) { 
-      return String(product.descripcion || product.DESCRIPCION || product.detalle || "").trim(); 
-    }
+
+    function getProductId(p) { return getProp(p, ["id", "ID", "codigo", "código"]); }
+    function getProductName(p) { return getProp(p, ["nombre", "NOMBRE", "name", "titulo", "título"]); }
+    function getProductPrice(p) { return getProp(p, ["precio", "PRECIO", "price", "valor"]); }
+    function getProductOldPrice(p) { return getProp(p, ["precio anterior", "PRECIO ANTERIOR", "precio_anterior", "old_price"]); }
+    function getProductDiscount(p) { return getProp(p, ["descuento", "DESCUENTO", "discount"]); }
+    function getProductCategory(p) { return getProp(p, ["categoria", "CATEGORIA", "categoría", "CATEGORY", "tipo"]) || "Carteras"; }
+    function getProductDescription(p) { return getProp(p, ["descripcion", "DESCRIPCION", "descripción", "DESCRIPTION", "detalle"]); }
     
-    function getProductImages(product) {
+    function getProductImages(p) {
       const rawImgs = [
-        product.imagen1 || product.IMAGEN1 || product.imagen || product.image || "",
-        product.imagen2 || product.IMAGEN2 || "",
-        product.imagen3 || product.IMAGEN3 || "",
-        product.imagen4 || product.IMAGEN4 || ""
+        getProp(p, ["imagen1", "IMAGEN1", "imagen", "image", "foto", "img1"]),
+        getProp(p, ["imagen2", "IMAGEN2", "foto2", "img2"]),
+        getProp(p, ["imagen3", "IMAGEN3", "foto3", "img3"]),
+        getProp(p, ["imagen4", "IMAGEN4", "foto4", "img4"])
       ];
       const validImgs = rawImgs.map(safeImageUrl).filter(Boolean);
       return validImgs.length > 0 ? validImgs : [PLACEHOLDER_IMAGE];
     }
 
-    // Usamos PapaParse con proxy antibloqueo CORS integrado
     function loadCatalog() {
       const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(GOOGLE_SHEET_CSV_URL);
       
@@ -740,7 +737,7 @@
     $("order-form").addEventListener("submit", sendOrderToWhatsApp);
     $("whatsapp-help").addEventListener("click", event => {
       event.preventDefault();
-      window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent("Hola, quisiera consultar por las carteras disponibles in Rosewood.")}`, "_blank", "noopener,noreferrer");
+      window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent("Hola, quisiera consultar por las carteras disponibles en Rosewood.")}`, "_blank", "noopener,noreferrer");
     });
     $("year").textContent = new Date().getFullYear();
     updateCartUI();
