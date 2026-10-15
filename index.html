@@ -279,7 +279,7 @@
     const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80";
     
     const CATALOGO_RESPALDO = [
-      { id: "BOLS-1", nombre: "Bolso Milano Cuero", precio: "$29.990", precio_anterior: "", descuento: "", categoria: "BOLSO", descripcion: "Elegante bolso de mano en ecocuero de alta durabilidad con detalles metálicos dorados.", imagen1: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80", imagen2: "", imagen3: "", imagen4: "" }
+      { id: "BOLS-1", nombre: "Bolso Milano Cuero", precio: "$29.990", precio_anterior: "", descuento: "", categoria: "BOLSO", descripcion: "Elegante bolso de mano en ecocuero de alta durabilidad con detalles metálicos dorados.", imagen1: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80" }
     ];
     let productosData = [];
     let cart = loadSavedCart();
@@ -360,6 +360,7 @@
       });
     }
     
+    // Mapeo exacto basado en las cabeceras de tu Google Sheet: ID, NOMBRE, PRECIO, CATEGORIA, DESCRIPCION, PRECIO ANTERIOR, DESCUENTO, IMAGEN1
     function getProductId(product) { 
       return String(product.id || product.id_auto || product.codigo || product[Object.keys(product)[0]] || "").trim(); 
     }
@@ -370,7 +371,7 @@
       return String(product.precio || product.price || product.valor || "").trim(); 
     }
     function getProductOldPrice(product) { 
-      return String(product.precio_anterior || product.precioanterior || product.old_price || "").trim(); 
+      return String(product["precio anterior"] || product.precio_anterior || product.precioanterior || product.old_price || "").trim(); 
     }
     function getProductDiscount(product) { 
       return String(product.descuento || product.discount || "").trim(); 
@@ -559,7 +560,7 @@
       if (discountText) {
         const discEl = document.createElement("span");
         discEl.className = "product-discount-label";
-        discEl.textContent = discountText;
+        discEl.textContent = discountText.includes("%") ? discountText : `${discountText}% de descuento`;
         priceBox.appendChild(discEl);
       }
       
@@ -733,21 +734,4 @@
     $("open-cart").addEventListener("click", () => toggleCart(true));
     $("close-cart").addEventListener("click", () => toggleCart(false));
     $("cart-modal").addEventListener("click", event => {
-      if (event.target === $("cart-modal")) toggleCart(false);
-    });
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && !$("cart-modal").classList.contains("hidden")) toggleCart(false);
-    });
-    $("search-input").addEventListener("input", renderProducts);
-    $("sort-select").addEventListener("change", renderProducts);
-    $("order-form").addEventListener("submit", sendOrderToWhatsApp);
-    $("whatsapp-help").addEventListener("click", event => {
-      event.preventDefault();
-      window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent("Hola, quisiera consultar por las carteras disponibles en Rosewood.")}`, "_blank", "noopener,noreferrer");
-    });
-    $("year").textContent = new Date().getFullYear();
-    updateCartUI();
-    loadCatalog();
-  </script>
-</body>
-</html>
+      if (
