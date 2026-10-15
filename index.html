@@ -525,4 +525,241 @@
           thumbBtn.appendChild(thumbImg);
           thumbBtn.addEventListener("click", () => {
             mainImg.src = imgUrl;
-            thumbsWrap.querySelectorAll(".thumb-btn").forEach(b => b.
+            thumbsWrap.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
+            thumbBtn.classList.add("active");
+          });
+          
+          thumbsWrap.appendChild(thumbBtn);
+        });
+        imageContainer.appendChild(thumbsWrap);
+      }
+      const info = document.createElement("div");
+      info.className = "product-info";
+      
+      const title = document.createElement("h3");
+      title.className = "product-title";
+      title.textContent = getProductName(product);
+      
+      const description = document.createElement("p");
+      description.className = "product-description";
+      description.textContent = getProductDescription(product);
+      
+      const bottom = document.createElement("div");
+      bottom.className = "product-bottom";
+      
+      const priceBox = document.createElement("div");
+      priceBox.className = "product-price-box";
+
+      const rawPrice = getProductPrice(product);
+      const numericPrice = parsePriceNumber(rawPrice);
+      const rawOldPrice = getProductOldPrice(product);
+      const numericOldPrice = parsePriceNumber(rawOldPrice);
+      const discountText = getProductDiscount(product);
+
+      if (rawOldPrice) {
+        const oldPriceEl = document.createElement("span");
+        oldPriceEl.className = "product-price-old";
+        oldPriceEl.textContent = numericOldPrice ? money(numericOldPrice) : rawOldPrice;
+        priceBox.appendChild(oldPriceEl);
+      }
+
+      const price = document.createElement("span");
+      price.className = "product-price";
+      price.textContent = rawPrice ? (numericPrice ? money(numericPrice) : rawPrice) : "Consultar";
+      priceBox.appendChild(price);
+
+      if (discountText) {
+        const discEl = document.createElement("span");
+        discEl.className = "product-discount-label";
+        discEl.textContent = discountText.includes("%") ? discountText : `${discountText}% de descuento`;
+        priceBox.appendChild(discEl);
+      }
+      
+      const add = document.createElement("button");
+      add.type = "button";
+      add.className = "add-btn";
+      add.innerHTML = '<i class="fa-solid fa-plus"></i><span>Añadir</span>';
+      add.setAttribute("aria-label", `Añadir ${getProductName(product)} al pedido`);
+      add.addEventListener("click", () => addToCart(getProductId(product)));
+      
+      bottom.append(priceBox, add);
+      info.append(title, description, bottom);
+      card.append(imageContainer, info);
+      return card;
+    }
+
+    function addToCart(productId) {
+      const product = productosData.find(p => getProductId(p) === String(productId));
+      if (!product) return;
+      const images = getProductImages(product);
+      const existing = cart.find(item => item.id === String(productId));
+      if (existing) {
+        if (existing.quantity >= 99) return showToast("Puedes añadir hasta 99 unidades por producto.");
+        existing.quantity++;
+      } else {
+        cart.push({
+          id: String(productId),
+          nombre: getProductName(product),
+          precioRaw: getProductPrice(product),
+          precioNum: parsePriceNumber(getProductPrice(product)),
+          imagen: images[0],
+          quantity: 1
+        });
+      }
+      saveCart();
+      updateCartUI();
+      showToast(`${getProductName(product)} añadido al pedido`);
+    }
+
+    function updateQuantity(productId, delta) {
+      const item = cart.find(p => p.id === String(productId));
+      if (!item) return;
+      item.quantity += delta;
+      if (item.quantity <= 0) cart = cart.filter(p => p.id !== String(productId));
+      if (item.quantity > 99) item.quantity = 99;
+      saveCart();
+      updateCartUI();
+    }
+
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== String(productId));
+      saveCart();
+      updateCartUI();
+      showToast("Producto eliminado del pedido");
+    }
+
+    function updateCartUI() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      $("cart-badge").textContent = count;
+      $("cart-badge").setAttribute("aria-label", `${count} productos en el pedido`);
+      $("cart-total-price").textContent = money(cart.reduce((sum, item) => sum + item.precioNum * item.quantity, 0));
+      const container = $("cart-items");
+      container.replaceChildren();
+      if (!cart.length) {
+        const empty = document.createElement("div");
+        empty.className = "cart-empty";
+        empty.innerHTML = '<i class="fa-solid fa-bag-shopping"></i>Tu pedido está vacío.<br>Agrega tus carteras favoritas para comenzar.';
+        container.appendChild(empty);
+        return;
+      }
+      cart.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "cart-item";
+        const img = document.createElement("img");
+        img.src = safeImageUrl(item.imagen) || PLACEHOLDER_IMAGE;
+        img.alt = item.nombre;
+        img.onerror = () => { img.onerror = null; img.src = PLACEHOLDER_IMAGE; };
+        const details = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "cart-item-name";
+        name.textContent = item.nombre;
+        const price = document.createElement("div");
+        price.className = "cart-item-price";
+        price.textContent = item.precioNum ? money(item.precioNum) : (item.precioRaw || "Precio por confirmar");
+        const controls = document.createElement("div");
+        controls.className = "quantity-control";
+        const minus = document.createElement("button");
+        minus.type = "button"; minus.textContent = "−"; minus.setAttribute("aria-label", `Restar una unidad de ${item.nombre}`);
+        minus.addEventListener("click", () => updateQuantity(item.id, -1));
+        const qty = document.createElement("span"); qty.textContent = item.quantity;
+        const plus = document.createElement("button");
+        plus.type = "button"; plus.textContent = "+"; plus.setAttribute("aria-label", `Agregar una unidad de ${item.nombre}`);
+        plus.addEventListener("click", () => updateQuantity(item.id, 1));
+        controls.append(minus, qty, plus);
+        const remove = document.createElement("button");
+        remove.type = "button"; remove.className = "remove-btn"; remove.textContent = "Eliminar";
+        remove.addEventListener("click", () => removeFromCart(item.id));
+        details.append(name, price, controls, remove);
+        const total = document.createElement("div");
+        total.className = "cart-item-total";
+        total.textContent = item.precioNum ? money(item.precioNum * item.quantity) : "";
+        row.append(img, details, total);
+        container.appendChild(row);
+      });
+    }
+
+    function toggleCart(forceOpen) {
+      const modal = $("cart-modal");
+      const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : modal.classList.contains("hidden");
+      modal.classList.toggle("hidden", !shouldOpen);
+      document.body.classList.toggle("modal-open", shouldOpen);
+      if (shouldOpen) $("close-cart").focus();
+      else $("open-cart").focus();
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+    }
+
+    function syncCartWithCatalog() {
+      cart = cart.map(item => {
+        const product = productosData.find(p => getProductId(p) === item.id);
+        if (!product) return item;
+        const images = getProductImages(product);
+        return {
+          ...item,
+          nombre: getProductName(product),
+          precioRaw: getProductPrice(product),
+          precioNum: parsePriceNumber(getProductPrice(product)),
+          imagen: images[0]
+        };
+      });
+      saveCart();
+      updateCartUI();
+    }
+
+    function sendOrderToWhatsApp(event) {
+      event.preventDefault();
+      if (!cart.length) return showToast("Agrega al menos una cartera antes de enviar el pedido.");
+      
+      const name = $("client-name").value.trim();
+      const location = $("client-location").value.trim();
+      const phone = $("client-phone").value.trim();
+      const notes = $("client-notes").value.trim();
+      if (!name || !location) return showToast("Completa tu nombre y ciudad o dirección de envío.");
+      
+      let message = "👜 *NUEVO PEDIDO - ROSEWOOD*\n\n";
+      message += `👤 *Cliente:* ${name}\n📍 *Envío:* ${location}\n`;
+      if (phone) message += `📱 *Teléfono:* ${phone}\n`;
+      if (notes) message += `📝 *Notas:* ${notes}\n`;
+      message += "\n🛍️ *Detalle del pedido:*\n";
+      cart.forEach((item, index) => {
+        const price = item.precioNum ? money(item.precioNum) : (item.precioRaw || "Por confirmar");
+        message += `${index + 1}. [${item.id}] ${item.nombre} x${item.quantity} — ${price}`;
+        if (item.precioNum) message += ` = ${money(item.precioNum * item.quantity)}`;
+        message += "\n";
+      });
+      const total = cart.reduce((sum, item) => sum + item.precioNum * item.quantity, 0);
+      if (cart.some(item => item.precioNum === 0)) message += "\nHay productos cuyo precio debe confirmarse.\n";
+      message += `\n💰 *Total estimado de productos:* ${money(total)}\n`;
+      message += "El envío se coordina por separado. ¡Gracias!";
+      
+      const url = `https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    $("open-cart").addEventListener("click", () => toggleCart(true));
+    $("close-cart").addEventListener("click", () => toggleCart(false));
+    $("cart-modal").addEventListener("click", event => {
+      if (event.target === $("cart-modal")) toggleCart(false);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !$("cart-modal").classList.contains("hidden")) toggleCart(false);
+    });
+    $("search-input").addEventListener("input", renderProducts);
+    $("sort-select").addEventListener("change", renderProducts);
+    $("order-form").addEventListener("submit", sendOrderToWhatsApp);
+    $("whatsapp-help").addEventListener("click", event => {
+      event.preventDefault();
+      window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent("Hola, quisiera consultar por las carteras disponibles en Rosewood.")}`, "_blank", "noopener,noreferrer");
+    });
+    $("year").textContent = new Date().getFullYear();
+    updateCartUI();
+    loadCatalog();
+  </script>
+</body>
+</html>
