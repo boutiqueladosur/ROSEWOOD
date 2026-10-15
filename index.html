@@ -360,7 +360,6 @@
       });
     }
     
-    // Mapeo flexible de columnas para leer id, nombre, precio, etc. sin importar variaciones de mayúsculas
     function getProductId(product) { 
       return String(product.id || product.id_auto || product.codigo || product[Object.keys(product)[0]] || "").trim(); 
     }
@@ -396,9 +395,7 @@
 
     async function loadCatalog() {
       try {
-        // Usamos un proxy CORS público y seguro para evitar bloqueos del navegador al leer Google Sheets
-        const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(GOOGLE_SHEET_CSV_URL);
-        const response = await fetch(proxyUrl, { cache: "no-store" });
+        const response = await fetch(GOOGLE_SHEET_CSV_URL, { cache: "no-store" });
         if (!response.ok) throw new Error(`Respuesta HTTP ${response.status}`);
         const csvText = await response.text();
         const rows = parseCSV(csvText);
@@ -410,7 +407,7 @@
           throw new Error("CSV vacío o sin datos válidos");
         }
       } catch (error) {
-        console.warn("Utilizando datos de respaldo local por error de red/CORS:", error);
+        console.warn("Utilizando datos de respaldo local por error de red:", error);
         productosData = CATALOGO_RESPALDO;
       } finally {
         $("loader").hidden = true;
