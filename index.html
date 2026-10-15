@@ -128,7 +128,7 @@
     
     /* Estilos de precio y descuento */
     .product-price-box {display:flex;flex-direction:column;gap:2px;}
-    .product-price-old {font-size:12px;color:#999;text-decoration:line-through;}
+    .product-price-old {font-size:12px;color:var(--danger);text-decoration:line-through;}
     .product-price {font-size:15px;font-weight:700;}
     .product-price.discounted {color:var(--danger);}
     .product-discount-label {font-size:11px;font-weight:700;color:var(--danger);margin-top:2px;}
@@ -205,7 +205,6 @@
     </nav>
   </header>
   <main>
-    <!-- Hero modificado: Centrado en cinta rosa con texto morado y sin imagen lateral -->
     <section class="hero">
       <div class="hero-content">
         <div class="eyebrow">Colección seleccionada</div>
@@ -525,22 +524,26 @@
       const numericOldPrice = parsePriceNumber(rawOldPrice);
       const discountText = getProductDiscount(product);
 
-      if (numericOldPrice > numericPrice) {
+      // Precio anterior tachado en rojo
+      if (numericOldPrice > 0 || rawOldPrice) {
         const oldPriceEl = document.createElement("span");
         oldPriceEl.className = "product-price-old";
-        oldPriceEl.textContent = money(numericOldPrice);
+        oldPriceEl.textContent = numericOldPrice ? money(numericOldPrice) : rawOldPrice;
         priceBox.appendChild(oldPriceEl);
       }
 
+      // Precio actual (con clase discounted si hay rebaja)
       const price = document.createElement("span");
-      price.className = "product-price" + (numericOldPrice > numericPrice ? " discounted" : "");
+      price.className = "product-price" + ((numericOldPrice > 0 || discountText) ? " discounted" : "");
       price.textContent = rawPrice ? (numericPrice ? money(numericPrice) : rawPrice) : "Consultar";
       priceBox.appendChild(price);
 
+      // Porcentaje de descuento con signo negativo automático
       if (discountText) {
+        let discClean = discountText.replace(/[^0-9]/g, ""); 
         const discEl = document.createElement("span");
         discEl.className = "product-discount-label";
-        discEl.textContent = discountText;
+        discEl.textContent = discClean ? `-${discClean}%` : discountText;
         priceBox.appendChild(discEl);
       }
       
