@@ -45,7 +45,6 @@
       font-family: "Plus Jakarta Sans", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-    /* Announcement Bar */
     .announcement {
       background: var(--text-main);
       color: var(--bg-main);
@@ -56,7 +55,6 @@
       text-transform: uppercase;
       font-weight: 500;
     }
-    /* Header & Navigation */
     .header {
       position: sticky;
       top: 0;
@@ -137,6 +135,7 @@
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.05em;
+      cursor: pointer;
       transition: var(--transition);
     }
     .cart-btn-trigger:hover {
@@ -155,7 +154,6 @@
       font-size: 11px;
       font-weight: 700;
     }
-    /* Hero Section */
     .hero {
       max-width: 1320px;
       margin: 0 auto;
@@ -211,6 +209,7 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       font-weight: 700;
+      text-decoration: none;
       transition: var(--transition);
       box-shadow: 0 8px 20px rgba(179, 142, 93, 0.25);
     }
@@ -219,7 +218,6 @@
       transform: translateY(-2px);
       box-shadow: 0 12px 28px rgba(179, 142, 93, 0.35);
     }
-    /* Benefits Strip */
     .benefits-strip {
       border-top: 1px solid var(--border-color);
       border-bottom: 1px solid var(--border-color);
@@ -248,7 +246,6 @@
       font-size: 18px;
       color: var(--accent-gold);
     }
-    /* Catalog Layout */
     .catalog {
       max-width: 1320px;
       margin: 0 auto;
@@ -272,7 +269,6 @@
       color: var(--text-muted);
       margin: 0;
     }
-    /* Toolbar & Filters */
     .toolbar-bar {
       display: flex;
       gap: 16px;
@@ -335,6 +331,7 @@
       padding: 10px 20px;
       font-size: 12px;
       font-weight: 500;
+      cursor: pointer;
       transition: var(--transition);
     }
     .category-chip:hover, .category-chip.active {
@@ -349,7 +346,6 @@
       font-size: 12px;
       color: var(--text-muted);
     }
-    /* Product Grid & Cards */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -369,7 +365,6 @@
       box-shadow: var(--shadow-md);
       border-color: rgba(24, 23, 22, 0.15);
     }
-    
     .card-media {
       position: relative;
       background: var(--bg-subtle);
@@ -430,6 +425,7 @@
       overflow: hidden;
       background: var(--bg-subtle);
       opacity: 0.5;
+      cursor: pointer;
       transition: var(--transition);
       flex-shrink: 0;
     }
@@ -499,6 +495,7 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       font-weight: 700;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -506,228 +503,4 @@
       transition: var(--transition);
     }
     .add-to-cart-btn:hover {
-      background: var(--accent-gold-dark);
-    }
-    /* Loading Spinner */
-    .loader-wrap {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--text-muted);
-      font-size: 13px;
-    }
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--border-color);
-      border-top-color: var(--accent-gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 16px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    /* Footer */
-    .footer {
-      background: var(--text-main);
-      color: var(--bg-main);
-      padding: 64px 32px 32px;
-    }
-    .footer-content {
-      max-width: 1320px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      gap: 40px;
-      align-items: center;
-    }
-    .footer-bottom {
-      max-width: 1320px;
-      margin: 48px auto 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 24px;
-      font-size: 11px;
-      color: var(--text-light);
-      display: flex;
-      justify-content: space-between;
-    }
-    /* WhatsApp Floating Button */
-    .whatsapp-fab {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      z-index: 30;
-      background: #25d366;
-      color: white;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
-      font-size: 26px;
-      transition: var(--transition);
-    }
-    .whatsapp-fab:hover {
-      transform: scale(1.08);
-    }
-    /* Sliding Cart Drawer / Modal */
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 60;
-      background: rgba(18, 18, 18, 0.6);
-      backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: flex-end;
-      opacity: 1;
-      transition: opacity 0.3s ease;
-    }
-    .drawer-overlay.hidden { display: none; }
-    
-    .cart-drawer {
-      width: min(100%, 460px);
-      height: 100%;
-      background: var(--bg-surface);
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow-lg);
-      animation: drawerSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes drawerSlide {
-      from { transform: translateX(100%); }
-      to { transform: translateX(0); }
-    }
-    .cart-drawer-header {
-      padding: 24px 28px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .cart-drawer-header h3 {
-      font-family: "Playfair Display", serif;
-      font-size: 24px;
-      font-weight: 500;
-      margin: 0;
-    }
-    .close-drawer-btn {
-      border: none;
-      background: transparent;
-      font-size: 20px;
-      color: var(--text-muted);
-      padding: 8px;
-    }
-    .cart-drawer-items {
-      padding: 16px 28px;
-      overflow-y: auto;
-      flex: 1;
-    }
-    .cart-item-row {
-      display: grid;
-      grid-template-columns: 80px 1fr auto;
-      gap: 16px;
-      padding: 18px 0;
-      border-bottom: 1px solid var(--border-color);
-      align-items: center;
-    }
-    .cart-item-row img {
-      width: 80px;
-      height: 90px;
-      object-fit: cover;
-      border-radius: var(--radius-sm);
-      background: var(--bg-subtle);
-    }
-    .cart-item-title {
-      font-family: "Playfair Display", serif;
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-    .cart-item-price {
-      font-size: 12px;
-      color: var(--accent-gold-dark);
-      font-weight: 700;
-    }
-    .qty-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 8px;
-    }
-    .qty-controls button {
-      border: 1px solid var(--border-color);
-      background: var(--bg-surface);
-      width: 26px;
-      height: 26px;
-      border-radius: var(--radius-sm);
-    }
-    .cart-drawer-footer {
-      border-top: 1px solid var(--border-color);
-      padding: 24px 28px;
-      background: var(--bg-main);
-    }
-    .checkout-form {
-      display: grid;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .checkout-form input, .checkout-form textarea {
-      width: 100%;
-      border: 1px solid var(--border-color);
-      background: var(--bg-surface);
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      outline: none;
-    }
-    .checkout-form input:focus, .checkout-form textarea:focus {
-      border-color: var(--border-focus);
-    }
-    .submit-order-btn {
-      background: #25d366;
-      color: white;
-      border: none;
-      padding: 16px;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 8px;
-      transition: var(--transition);
-    }
-    .submit-order-btn:hover { background: #1eb956; }
-    /* Toast Notification */
-    .toast-msg {
-      position: fixed;
-      bottom: 32px;
-      left: 50%;
-      transform: translate(-50%, 40px);
-      background: var(--text-main);
-      color: var(--bg-surface);
-      padding: 14px 24px;
-      border-radius: 40px;
-      font-size: 12px;
-      font-weight: 500;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: var(--transition);
-      box-shadow: var(--shadow-md);
-    }
-    .toast-msg.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-    /* Responsive */
-    @media (max-width: 992px) {
-      .product-grid { grid-template-columns: repeat(2, 1fr); }
-      .hero-title { font-size: 42px; }
-      .nav-links { display: none; }
-    }
-    @media (max-width: 600px) {
-      .product-grid { grid-template-columns: repeat(1, 1fr); }
-      .benefits-grid { grid-template-columns: 1fr; gap: 16px; }
-      .catalog-header { flex-direction: column; align-
+      background:
