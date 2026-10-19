@@ -36,7 +36,6 @@
       --radius-lg: 16px;
       --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -46,7 +45,6 @@
       font-family: "Plus Jakarta Sans", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-
     /* Announcement Bar */
     .announcement {
       background: var(--text-main);
@@ -58,7 +56,6 @@
       text-transform: uppercase;
       font-weight: 500;
     }
-
     /* Header & Navigation */
     .header {
       position: sticky;
@@ -158,7 +155,6 @@
       font-size: 11px;
       font-weight: 700;
     }
-
     /* Hero Section */
     .hero {
       max-width: 1320px;
@@ -223,7 +219,6 @@
       transform: translateY(-2px);
       box-shadow: 0 12px 28px rgba(179, 142, 93, 0.35);
     }
-
     /* Benefits Strip */
     .benefits-strip {
       border-top: 1px solid var(--border-color);
@@ -253,7 +248,6 @@
       font-size: 18px;
       color: var(--accent-gold);
     }
-
     /* Catalog Layout */
     .catalog {
       max-width: 1320px;
@@ -278,7 +272,6 @@
       color: var(--text-muted);
       margin: 0;
     }
-
     /* Toolbar & Filters */
     .toolbar-bar {
       display: flex;
@@ -328,7 +321,6 @@
       background-position: right 14px center;
       background-size: 14px;
     }
-
     .categories-bar {
       display: flex;
       gap: 10px;
@@ -350,7 +342,6 @@
       color: var(--bg-surface);
       border-color: var(--text-main);
     }
-
     .meta-status {
       display: flex;
       justify-content: space-between;
@@ -358,7 +349,6 @@
       font-size: 12px;
       color: var(--text-muted);
     }
-
     /* Product Grid & Cards */
     .product-grid {
       display: grid;
@@ -423,7 +413,6 @@
       font-weight: 700;
       border-radius: var(--radius-sm);
     }
-
     .thumb-gallery {
       display: flex;
       gap: 6px;
@@ -453,7 +442,6 @@
       opacity: 1;
       border-color: var(--accent-gold);
     }
-
     .card-body {
       padding: 20px;
       display: flex;
@@ -520,7 +508,6 @@
     .add-to-cart-btn:hover {
       background: var(--accent-gold-dark);
     }
-
     /* Loading Spinner */
     .loader-wrap {
       text-align: center;
@@ -538,7 +525,6 @@
       margin: 0 auto 16px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     /* Footer */
     .footer {
       background: var(--text-main);
@@ -563,7 +549,6 @@
       display: flex;
       justify-content: space-between;
     }
-
     /* WhatsApp Floating Button */
     .whatsapp-fab {
       position: fixed;
@@ -584,7 +569,6 @@
     .whatsapp-fab:hover {
       transform: scale(1.08);
     }
-
     /* Sliding Cart Drawer / Modal */
     .drawer-overlay {
       position: fixed;
@@ -632,7 +616,6 @@
       color: var(--text-muted);
       padding: 8px;
     }
-
     .cart-drawer-items {
       padding: 16px 28px;
       overflow-y: auto;
@@ -716,7 +699,6 @@
       transition: var(--transition);
     }
     .submit-order-btn:hover { background: #1eb956; }
-
     /* Toast Notification */
     .toast-msg {
       position: fixed;
@@ -739,7 +721,6 @@
       opacity: 1;
       transform: translate(-50%, 0);
     }
-
     /* Responsive */
     @media (max-width: 992px) {
       .product-grid { grid-template-columns: repeat(2, 1fr); }
@@ -749,518 +730,4 @@
     @media (max-width: 600px) {
       .product-grid { grid-template-columns: repeat(1, 1fr); }
       .benefits-grid { grid-template-columns: 1fr; gap: 16px; }
-      .catalog-header { flex-direction: column; align-items: flex-start; }
-      .toolbar-bar { flex-direction: column; }
-      .search-box { max-width: 100%; }
-      .sort-dropdown { width: 100%; }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Announcement Bar -->
-  <div class="announcement">
-    Envío coordinado a todo Chile · Atención directa y personalizada
-  </div>
-
-  <!-- Header -->
-  <header class="header">
-    <nav class="nav">
-      <a href="#" class="brand">
-        <span class="brand-logo-mark">R</span>
-        <div>
-          <span class="brand-title">ROSEWOOD</span>
-          <span class="brand-sub">Atelier & Boutique</span>
-        </div>
-      </a>
-      
-      <div class="nav-links">
-        <a href="#coleccion">Colección</a>
-        <a href="#nosotros">Boutique</a>
-      </div>
-
-      <button class="cart-btn-trigger" id="open-cart" type="button">
-        <i class="fa-solid fa-bag-shopping"></i>
-        <span>Mi Pedido</span>
-        <span class="cart-badge" id="cart-badge">0</span>
-      </button>
-    </nav>
-  </header>
-
-  <main>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="eyebrow-tag">Novedades 2026</div>
-      <h1 class="hero-title">Diseño atemporal, <em>estilo único.</em></h1>
-      <p class="hero-subtitle">Descubre nuestra colección exclusiva de carteras y accesorios. Elige tus piezas favoritas y gestiona tu pedido directamente por WhatsApp.</p>
-      <a href="#coleccion" class="hero-cta">Explorar Colección <i class="fa-solid fa-arrow-right"></i></a>
-    </section>
-
-    <!-- Ventajas de Compra -->
-    <section class="benefits-strip">
-      <div class="benefits-grid">
-        <div class="benefit-item"><i class="fa-solid fa-gem"></i> Calidad Seleccionada</div>
-        <div class="benefit-item"><i class="fa-solid fa-comments"></i> Asesoría Personalizada</div>
-        <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Envíos a todo Chile</div>
-      </div>
-    </section>
-
-    <!-- Catálogo de Productos -->
-    <section class="catalog" id="coleccion">
-      <div class="catalog-header">
-        <div>
-          <div class="eyebrow-tag" style="margin-bottom:8px;">Boutique Catalog</div>
-          <h2>Nuestra Colección</h2>
-        </div>
-        <p>Piezas seleccionadas para complementar tu día a día.</p>
-      </div>
-
-      <!-- Barra de Herramientas (Búsqueda y Filtros) -->
-      <div class="toolbar-bar">
-        <div class="search-box">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input id="search-input" type="search" placeholder="Buscar cartera, color, modelo...">
-        </div>
-        <select class="sort-dropdown" id="sort-select">
-          <option value="featured">Ordenar por: Recomendados</option>
-          <option value="price-asc">Precio: Menor a Mayor</option>
-          <option value="price-desc">Precio: Mayor a Menor</option>
-          <option value="name">Nombre: A a Z</option>
-        </select>
-      </div>
-
-      <!-- Filtros por Categoría -->
-      <div class="categories-bar" id="category-filters"></div>
-
-      <!-- Meta info -->
-      <div class="meta-status">
-        <span id="product-count">Cargando colección…</span>
-        <span id="active-filter-label"></span>
-      </div>
-
-      <!-- Loader State -->
-      <div class="loader-wrap" id="loader">
-        <div class="spinner"></div>
-        <p>Conectando con nuestro catálogo en vivo…</p>
-      </div>
-
-      <!-- Grilla de Productos -->
-      <div class="product-grid" id="product-grid"></div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer" id="nosotros">
-    <div class="footer-content">
-      <a href="#" class="brand" style="color:white;">
-        <span class="brand-logo-mark" style="border-color:var(--accent-gold); color:var(--accent-gold);">R</span>
-        <div>
-          <span class="brand-title">ROSEWOOD</span>
-          <span class="brand-sub" style="color:#a8a299;">Boutique & Atelier</span>
-        </div>
-      </a>
-      <p style="font-size:12px; color:#a8a299; max-width:320px; margin:0;">¿Tienes alguna consulta especial o buscas un producto a pedido? Contáctanos por WhatsApp.</p>
-    </div>
-    <div class="footer-bottom">
-      <span>© <span id="year"></span> Rosewood Boutique. Todos los derechos reservados.</span>
-      <span>Diseñado con elegancia.</span>
-    </div>
-  </footer>
-
-  <!-- WhatsApp FAB -->
-  <a class="whatsapp-fab" id="whatsapp-help" href="#" title="Consultar por WhatsApp">
-    <i class="fa-brands fa-whatsapp"></i>
-  </a>
-
-  <!-- Lateral Drawer / Carrito de Compras -->
-  <div class="drawer-overlay hidden" id="cart-modal">
-    <aside class="cart-drawer">
-      <div class="cart-drawer-header">
-        <h3>Tu Pedido</h3>
-        <button class="close-drawer-btn" id="close-cart" type="button"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="cart-drawer-items" id="cart-items"></div>
-
-      <div class="cart-drawer-footer">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:13px;">
-          <span>Subtotal estimado</span>
-          <strong id="cart-total-price" style="font-size:20px;">$0</strong>
-        </div>
-
-        <form class="checkout-form" id="order-form">
-          <input id="client-name" name="name" type="text" placeholder="Nombre completo *" required>
-          <input id="client-location" name="location" type="text" placeholder="Ciudad / Dirección de envío *" required>
-          <input id="client-phone" name="phone" type="tel" placeholder="Teléfono de contacto (opcional)">
-          <textarea id="client-notes" name="notes" placeholder="Notas de pedido (color, preferencias...)" rows="2"></textarea>
-          
-          <button class="submit-order-btn" type="submit">
-            <i class="fa-brands fa-whatsapp"></i> Confirmar por WhatsApp
-          </button>
-        </form>
-      </div>
-    </aside>
-  </div>
-
-  <!-- Toast Toast -->
-  <div class="toast-msg" id="toast"></div>
-
-  <script>
-    const TELEFONO_WHATSAPP = "56935707722";
-    const SHEET_ID = "1vRB0h9qoVHLNbpG7Fr6z8HWwkg_8yMhWejJb1JF_LjSVbFt9LDD853TVCo19JvJ4xMXm-QEVmPV7KuP";
-    const STORAGE_KEY = "rosewood_cart_v2";
-    const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80";
-    
-    let productosData = [];
-    let cart = loadSavedCart();
-    let activeCategory = "todos";
-    let toastTimer;
-
-    const $ = id => document.getElementById(id);
-    const money = val => new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(val);
-    const normalizeText = val => String(val ?? "").trim().toLowerCase();
-
-    function safeImageUrl(val) {
-      const raw = String(val || "").trim();
-      if (!raw) return "";
-      try {
-        const url = new URL(raw, window.location.href);
-        return ["https:", "http:"].includes(url.protocol) ? url.href : "";
-      } catch { return ""; }
-    }
-
-    function parsePriceNumber(val) {
-      if (typeof val === "number") return Number.isFinite(val) ? val : 0;
-      let text = String(val ?? "").trim().replace(/[^\d,.-]/g, "");
-      if (!text) return 0;
-      if (text.includes(".") && text.includes(",")) {
-        text = text.lastIndexOf(",") > text.lastIndexOf(".") ? text.replace(/\./g, "").replace(",", ".") : text.replace(/,/g, "");
-      } else if (/\.\d{3}$/.test(text) || /,\d{3}$/.test(text)) {
-        text = text.replace(/[.,]/g, "");
-      } else {
-        text = text.replace(",", ".");
-      }
-      const num = Number(text);
-      return Number.isFinite(num) && num >= 0 ? Math.round(num) : 0;
-    }
-
-    function loadSavedCart() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      } catch { return []; }
-    }
-    function saveCart() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch {}
-    }
-
-    function getProp(obj, keys) {
-      if (!obj) return "";
-      const lowerKeys = Object.keys(obj).map(k => ({ original: k, clean: k.trim().toLowerCase() }));
-      for (const k of keys) {
-        const target = k.trim().toLowerCase();
-        const found = lowerKeys.find(item => item.clean === target);
-        if (found && obj[found.original] !== undefined) return String(obj[found.original]).trim();
-      }
-      return "";
-    }
-
-    const getProductId = p => getProp(p, ["id", "codigo"]);
-    const getProductName = p => getProp(p, ["nombre", "name", "titulo"]);
-    const getProductPrice = p => getProp(p, ["precio", "price", "valor"]);
-    const getProductOldPrice = p => getProp(p, ["precio anterior", "precio_anterior", "old_price"]);
-    const getProductDiscount = p => getProp(p, ["descuento", "discount"]);
-    const getProductCategory = p => getProp(p, ["categoria", "categoría", "tipo"]) || "Carteras";
-    const getProductDescription = p => getProp(p, ["descripcion", "descripción", "detalle"]);
-
-    function getProductImages(p) {
-      const raw = [
-        getProp(p, ["imagen1", "imagen", "image", "foto"]),
-        getProp(p, ["imagen2", "foto2"]),
-        getProp(p, ["imagen3", "foto3"]),
-        getProp(p, ["imagen4", "foto4"])
-      ];
-      const valid = raw.map(safeImageUrl).filter(Boolean);
-      return valid.length > 0 ? valid : [PLACEHOLDER_IMAGE];
-    }
-
-    // JSONP Handler para Google Sheets
-    window.handleSheetResponse = function(response) {
-      try {
-        if (!response || !response.table) throw new Error("Datos no encontrados");
-        const cols = response.table.cols.map(c => c ? c.label : "");
-        productosData = response.table.rows.map(row => {
-          const item = {};
-          row.c.forEach((cell, idx) => {
-            const key = cols[idx] ? cols[idx].trim() : `col_${idx}`;
-            item[key] = cell ? (cell.f !== undefined ? cell.f : (cell.v !== undefined ? cell.v : "")) : "";
-          });
-          return item;
-        }).filter(p => getProductName(p));
-
-        $("loader").hidden = true;
-        renderCategoryFilters();
-        renderProducts();
-      } catch (e) {
-        console.error("Error al procesar Google Sheet:", e);
-        $("loader").innerHTML = "<p style='color:var(--danger)'>Error al cargar los productos desde la hoja de cálculo.</p>";
-      }
-    };
-
-    function loadCatalog() {
-      const jsonpUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-${SHEET_ID}/gviz/tq?tqx=responseHandler:handleSheetResponse`;
-      const script = document.createElement("script");
-      script.src = jsonpUrl;
-      script.onerror = () => {
-        $("loader").innerHTML = "<p style='color:var(--danger)'>Error de conexión con Google Sheets.</p>";
-      };
-      document.body.appendChild(script);
-    }
-
-    function renderCategoryFilters() {
-      const container = $("category-filters");
-      container.replaceChildren();
-      const categories = [...new Set(productosData.map(getProductCategory))].filter(Boolean).sort();
-      const allCategories = ["todos", ...categories];
-
-      allCategories.forEach(cat => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = `category-chip ${cat === activeCategory ? "active" : ""}`;
-        btn.textContent = cat === "todos" ? "Ver Todo" : cat;
-        btn.addEventListener("click", () => {
-          activeCategory = cat;
-          renderCategoryFilters();
-          renderProducts();
-        });
-        container.appendChild(btn);
-      });
-    }
-
-    function getFilteredProducts() {
-      const query = normalizeText($("search-input").value);
-      let items = productosData.filter(p => {
-        const matchesCat = activeCategory === "todos" || getProductCategory(p).toLowerCase() === activeCategory.toLowerCase();
-        const searchTarget = normalizeText(`${getProductName(p)} ${getProductDescription(p)} ${getProductCategory(p)}`);
-        return matchesCat && (!query || searchTarget.includes(query));
-      });
-
-      const sort = $("sort-select").value;
-      if (sort === "price-asc") items.sort((a, b) => parsePriceNumber(getProductPrice(a)) - parsePriceNumber(getProductPrice(b)));
-      if (sort === "price-desc") items.sort((a, b) => parsePriceNumber(getProductPrice(b)) - parsePriceNumber(getProductPrice(a)));
-      if (sort === "name") items.sort((a, b) => getProductName(a).localeCompare(getProductName(b), "es"));
-
-      return items;
-    }
-
-    function renderProducts() {
-      const grid = $("product-grid");
-      const items = getFilteredProducts();
-      grid.replaceChildren();
-
-      $("product-count").textContent = `${items.length} ${items.length === 1 ? "pieza disponible" : "piezas disponibles"}`;
-      $("active-filter-label").textContent = activeCategory === "todos" ? "" : `Categoría: ${activeCategory}`;
-
-      if (!items.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px; color:var(--text-muted);">No encontramos artículos que coincidan con tu búsqueda.</div>';
-        return;
-      }
-
-      items.forEach(p => grid.appendChild(createProductCard(p)));
-    }
-
-    function createProductCard(product) {
-      const card = document.createElement("article");
-      card.className = "product-card";
-
-      const images = getProductImages(product);
-      const rawPrice = getProductPrice(product);
-      const numPrice = parsePriceNumber(rawPrice);
-      const rawOldPrice = getProductOldPrice(product);
-      const numOldPrice = parsePriceNumber(rawOldPrice);
-      const discount = getProductDiscount(product);
-
-      card.innerHTML = `
-        <div class="card-media">
-          <span class="card-badge">${getProductCategory(product)}</span>
-          ${discount ? `<span class="discount-tag">${discount.includes('%') ? discount : discount + '% OFF'}</span>` : ''}
-          <img src="${images[0]}" alt="${getProductName(product)}" loading="lazy" id="img-${getProductId(product)}">
-        </div>
-        ${images.length > 1 ? `
-          <div class="thumb-gallery">
-            ${images.map((img, idx) => `
-              <button class="thumb-btn ${idx === 0 ? 'active' : ''}" type="button" data-img="${img}" data-id="${getProductId(product)}">
-                <img src="${img}" alt="Vista ${idx + 1}">
-              </button>
-            `).join('')}
-          </div>
-        ` : ''}
-        <div class="card-body">
-          <h3 class="card-title">${getProductName(product)}</h3>
-          <p class="card-desc">${getProductDescription(product)}</p>
-          <div class="card-footer">
-            <div class="price-box">
-              ${rawOldPrice ? `<span class="price-old">${numOldPrice ? money(numOldPrice) : rawOldPrice}</span>` : ''}
-              <span class="price-current">${numPrice ? money(numPrice) : (rawPrice || 'Consultar')}</span>
-            </div>
-            <button class="add-to-cart-btn" type="button" data-id="${getProductId(product)}">
-              <i class="fa-solid fa-plus"></i> Añadir al Pedido
-            </button>
-          </div>
-        </div>
-      `;
-
-      // Event listeners para miniaturas
-      card.querySelectorAll('.thumb-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const targetImg = btn.getAttribute('data-img');
-          const pId = btn.getAttribute('data-id');
-          $(`img-${pId}`).src = targetImg;
-          card.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        });
-      });
-
-      // Event listener para botón de añadir
-      card.querySelector('.add-to-cart-btn').addEventListener('click', () => {
-        addToCart(getProductId(product));
-      });
-
-      return card;
-    }
-
-    function addToCart(productId) {
-      const product = productosData.find(p => getProductId(p) === String(productId));
-      if (!product) return;
-      const images = getProductImages(product);
-
-      const existing = cart.find(item => item.id === String(productId));
-      if (existing) {
-        existing.quantity++;
-      } else {
-        cart.push({
-          id: String(productId),
-          nombre: getProductName(product),
-          precioRaw: getProductPrice(product),
-          precioNum: parsePriceNumber(getProductPrice(product)),
-          imagen: images[0],
-          quantity: 1
-        });
-      }
-
-      saveCart();
-      updateCartUI();
-      showToast(`${getProductName(product)} añadido a tu pedido`);
-    }
-
-    function updateCartUI() {
-      const count = cart.reduce((sum, i) => sum + i.quantity, 0);
-      $("cart-badge").textContent = count;
-
-      const total = cart.reduce((sum, i) => sum + (i.precioNum * i.quantity), 0);
-      $("cart-total-price").textContent = money(total);
-
-      const container = $("cart-items");
-      container.replaceChildren();
-
-      if (!cart.length) {
-        container.innerHTML = '<div style="text-align:center; padding:48px 0; color:var(--text-muted); font-size:13px;">Tu carrito está vacío.<br>Agrega tus artículos preferidos.</div>';
-        return;
-      }
-
-      cart.forEach(item => {
-        const row = document.createElement("div");
-        row.className = "cart-item-row";
-        row.innerHTML = `
-          <img src="${item.imagen || PLACEHOLDER_IMAGE}" alt="${item.nombre}">
-          <div>
-            <div class="cart-item-title">${item.nombre}</div>
-            <div class="cart-item-price">${item.precioNum ? money(item.precioNum) : 'Por confirmar'}</div>
-            <div class="qty-controls">
-              <button type="button" class="minus-btn">-</button>
-              <span>${item.quantity}</span>
-              <button type="button" class="plus-btn">+</button>
-            </div>
-          </div>
-          <button type="button" style="border:none; background:none; color:var(--text-light); cursor:pointer;" class="del-btn">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
-        `;
-
-        row.querySelector('.minus-btn').addEventListener('click', () => updateQuantity(item.id, -1));
-        row.querySelector('.plus-btn').addEventListener('click', () => updateQuantity(item.id, 1));
-        row.querySelector('.del-btn').addEventListener('click', () => removeFromCart(item.id));
-
-        container.appendChild(row);
-      });
-    }
-
-    function updateQuantity(productId, delta) {
-      const item = cart.find(p => p.id === String(productId));
-      if (!item) return;
-      item.quantity += delta;
-      if (item.quantity <= 0) cart = cart.filter(p => p.id !== String(productId));
-      saveCart();
-      updateCartUI();
-    }
-
-    function removeFromCart(productId) {
-      cart = cart.filter(p => p.id !== String(productId));
-      saveCart();
-      updateCartUI();
-      showToast("Artículo eliminado del pedido");
-    }
-
-    function toggleCart(open) {
-      const modal = $("cart-modal");
-      modal.classList.toggle("hidden", !open);
-    }
-
-    function showToast(msg) {
-      const toast = $("toast");
-      toast.textContent = msg;
-      toast.classList.add("show");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
-    }
-
-    function sendOrderToWhatsApp(e) {
-      e.preventDefault();
-      if (!cart.length) return showToast("Añade productos antes de enviar tu pedido.");
-
-      const name = $("client-name").value.trim();
-      const location = $("client-location").value.trim();
-      const phone = $("client-phone").value.trim();
-      const notes = $("client-notes").value.trim();
-
-      let msg = "👜 *NUEVO PEDIDO - ROSEWOOD BOUTIQUE*\n\n";
-      msg += `👤 *Cliente:* ${name}\n📍 *Envío:* ${location}\n`;
-      if (phone) msg += `📱 *Teléfono:* ${phone}\n`;
-      if (notes) msg += `📝 *Notas:* ${notes}\n`;
-      msg += "\n🛍️ *Detalle del pedido:*\n";
-
-      cart.forEach((item, idx) => {
-        const priceStr = item.precioNum ? money(item.precioNum) : (item.precioRaw || "Por confirmar");
-        msg += `${idx + 1}. [${item.id}] ${item.nombre} x${item.quantity} — ${priceStr}\n`;
-      });
-
-      const total = cart.reduce((sum, item) => sum + (item.precioNum * item.quantity), 0);
-      msg += `\n💰 *Total estimado:* ${money(total)}\n\n¡Gracias! Coordino envío y pago por aquí.`;
-
-      window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(msg)}`, "_blank");
-    }
-
-    // Event Listeners
-    $("open-cart").addEventListener("click", () => toggleCart(true));
-    $("close-cart").addEventListener("click", () => toggleCart(false));
-    $("cart-modal").addEventListener("click", e => { if (e.target === $("cart-modal")) toggleCart(false); });
-    $("search-input").addEventListener("input", renderProducts);
-    $("sort-select").addEventListener("change", renderProducts);
-    $("order-form").addEventListener("submit", sendOrderToWhatsApp);
-    $("year").textContent = new Date().getFullYear();
-
-    // Inicialización
-    updateCartUI();
-    loadCatalog();
-  </script>
-</body>
-</html>
+      .catalog-header { flex-direction: column; align-
