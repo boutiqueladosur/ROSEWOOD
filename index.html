@@ -846,103 +846,444 @@
     </aside>
   </div>
   <div class="toast-msg" id="toast"></div>
-
   <script>
-    const TELEFONO_WHATSAPP = "56935707722";
-    const SPREADSHEET_ID = "1WJKJSqb_Fq44eLWkKNOGtfrD2DW0WQmO99WQ6kWEqt8";
-    const STORAGE_KEY = "rosewood_cart_v2";
-    const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80";
-    
-    let productosData = [];
-    let cart = loadSavedCart();
-    let activeCategory = "todos";
-    let toastTimer;
+(() => {
+  "use strict";
 
-    const $ = id => document.getElementById(id);
-    const money = val => new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(val);
-    const normalizeText = val => String(val ?? "").trim().toLowerCase();
+  const TELEFONO_WHATSAPP = "56935707722";
+  const SPREADSHEET_ID = "1WJKJSqb_Fq44eLWkKNOGtfrD2DW0WQmO99WQ6kWEqt8";
+  const STORAGE_KEY = "rosewood_cart_v2";
+  const PLACEHOLDER_IMAGE =
+    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80";
 
-    function safeImageUrl(val) {
-      let raw = String(val || "").trim();
-      if (!raw) return "";
-      if (raw.includes("github.com") && raw.includes("/blob/")) {
-        raw = raw.replace("/blob/", "/raw/");
-      }
-      try {
-        const url = new URL(raw, window.location.href);
-        return ["https:", "http:"].includes(url.protocol) ? url.href : "";
-      } catch { return ""; }
+  let productosData = [];
+  let cart = loadSavedCart();
+  let activeCategory = "todos";
+  let toastTimer;
+
+  const $ = id => document.getElementById(id);
+  const money = val => new Intl.NumberFormat("es-CL", {
+    style: "currency", currency: "CLP", maximumFractionDigits: 0
+  }).format(Number(val) || 0);
+
+  const normalizeText = val => String(val ?? "")
+    .trim().toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  const cleanKey = val => normalizeText(val).replace(/[^a-z0-9]/g, "");
+
+  function safeImageUrl(val) {
+    let raw = String(val || "").trim();
+    if (!raw) return "";
+    if (raw.includes("github.com") && raw.includes("/blob/")) {
+      raw = raw.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/");
     }
-
-    function parsePriceNumber(val) {
-      if (typeof val === "number") return Number.isFinite(val) ? val : 0;
-      let text = String(val ?? "").trim().replace(/[^\d,.-]/g, "");
-      if (!text) return 0;
-      if (text.includes(".") && text.includes(",")) {
-        text = text.lastIndexOf(",") > text.lastIndexOf(".") ? text.replace(/\./g, "").replace(",", ".") : text.replace(/,/g, "");
-      } else if (/\.\d{3}$/.test(text) \vert{}\vert{} /,\d{3}$/.test(text)) {
-        text = text.replace(/[.,]/g, "");
-      } else {
-        text = text.replace(",", ".");
-      }
-      const num = Number(text);
-      return Number.isFinite(num) && num >= 0 ? Math.round(num) : 0;
-    }
-
-    function loadSavedCart() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; }
-    }
-    function saveCart() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch {}
-    }
-
-    function getProp(obj, keys) {
-      if (!obj) return "";
-      const lowerKeys = Object.keys(obj).map(k => ({ 
-        original: k, 
-        clean: k.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "") 
-      }));
-      for (const k of keys) {
-        const target = k.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
-        const found = lowerKeys.find(item => item.clean === target || item.clean.includes(target));
-        if (found && obj[found.original] !== undefined && obj[found.original] !== null) {
-          return String(obj[found.original]).trim();
-        }
-      }
+    try {
+      const url = new URL(raw, window.location.href);
+      return ["https:", "http:"].includes(url.protocol) ? url.href : "";
+    } catch {
       return "";
     }
+  }
 
-    const getProductId = (p, idx) => getProp(p, ["id", "codigo", "col_0"]) || `prod_${idx}`;
-    const getProductName = p => getProp(p, ["nombre", "name", "titulo", "producto", "articulo"]);
-    const getProductPrice = p => getProp(p, ["precio", "price", "valor"]);
-    const getProductOldPrice = p => getProp(p, ["precio_anterior", "precio anterior", "old_price"]);
-    const getProductDiscount = p => getProp(p, ["descuento", "discount"]);
-    const getProductCategory = p => getProp(p, ["categoria", "categoría", "tipo"]) || "General";
-    const getProductDescription = p => getProp(p, ["descripcion", "descripción", "detalle"]);
+  function parsePriceNumber(val) {
+    if (typeof val === "number") return Number.isFinite(val) && val >= 0 ? Math.round(val) : 0;
+    let text = String(val ?? "").trim().replace(/[^\d,.-]/g, "");
+    if (!text) return 0;
 
-    function getProductImages(p) {
-      const raw = [
-        getProp(p, ["imagen_1", "imagen1", "imagen", "image", "foto", "url"]),
-        getProp(p, ["imagen_2", "imagen2", "foto2"]),
-        getProp(p, ["imagen_3", "imagen3", "foto3"]),
-        getProp(p, ["imagen_4", "imagen4", "foto4"])
-      ];
-      const valid = raw.map(safeImageUrl).filter(Boolean);
-      return valid.length > 0 ? valid : [PLACEHOLDER_IMAGE];
+    if (text.includes(".") && text.includes(",")) {
+      text = text.lastIndexOf(",") > text.lastIndexOf(".")
+        ? text.replace(/\./g, "").replace(",", ".")
+        : text.replace(/,/g, "");
+    } else if (/\.\d{3}$/.test(text) || /,\d{3}$/.test(text)) {
+      text = text.replace(/[.,]/g, "");
+    } else {
+      text = text.replace(",", ".");
     }
 
-    window.handleSheetResponse = function(response) {
-      try {
-        if (!response || !response.table) throw new Error("Estructura de datos inválida.");
-        const cols = response.table.cols.map(c => c ? (c.label || c.id) : "");
-        productosData = response.table.rows.map((row, idx) => {
-          const item = {};
-          if (row.c) {
-            row.c.forEach((cell, i) => {
-              const key = cols[i] ? cols[i].trim() : `col_${i}`;
-              item[key] = cell ? (cell.f !== undefined ? cell.f : (cell.v !== undefined ? cell.v : "")) : "";
-            });
-          }
-          if (!item.id && !item.codigo) item.id = `prod_${idx}`;
-          return item;
-        }).filter(p => getProductName(p) || getProductPrice(p));
+    const num = Number(text);
+    return Number.isFinite(num) && num >= 0 ? Math.round(num) : 0;
+  }
+
+  function loadSavedCart() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      if (!Array.isArray(saved)) return [];
+      return saved
+        .filter(item => item && typeof item === "object")
+        .map(item => ({
+          id: String(item.id ?? ""),
+          name: String(item.name ?? "Producto"),
+          price: parsePriceNumber(item.price),
+          image: safeImageUrl(item.image) || PLACEHOLDER_IMAGE,
+          qty: Math.max(1, Math.min(99, Number.parseInt(item.qty, 10) || 1))
+        }))
+        .filter(item => item.id);
+    } catch {
+      return [];
+    }
+  }
+
+  function saveCart() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch {}
+  }
+
+  function getProp(obj, keys) {
+    if (!obj) return "";
+    const entries = Object.keys(obj).map(original => ({ original, clean: cleanKey(original) }));
+
+    // Exact match first to prevent "precio" from accidentally matching "precio_anterior".
+    for (const key of keys) {
+      const target = cleanKey(key);
+      const found = entries.find(item => item.clean === target);
+      if (found && obj[found.original] != null) return String(obj[found.original]).trim();
+    }
+    return "";
+  }
+
+  const getProductId = (p, idx = 0) => getProp(p, ["id", "codigo", "sku", "col_0"]) || `prod_${idx}`;
+  const getProductName = p => getProp(p, ["nombre", "name", "titulo", "producto", "articulo"]) || "Producto";
+  const getProductPrice = p => getProp(p, ["precio", "price", "valor"]);
+  const getProductOldPrice = p => getProp(p, ["precio_anterior", "precio anterior", "old_price"]);
+  const getProductDiscount = p => getProp(p, ["descuento", "discount"]);
+  const getProductCategory = p => getProp(p, ["categoria", "categoría", "tipo"]) || "General";
+  const getProductDescription = p => getProp(p, ["descripcion", "descripción", "detalle"]);
+
+  function getProductImages(p) {
+    const raw = [
+      getProp(p, ["imagen_1", "imagen1", "imagen", "image", "foto", "url"]),
+      getProp(p, ["imagen_2", "imagen2", "foto2"]),
+      getProp(p, ["imagen_3", "imagen3", "foto3"]),
+      getProp(p, ["imagen_4", "imagen4", "foto4"])
+    ];
+    const valid = [...new Set(raw.map(safeImageUrl).filter(Boolean))];
+    return valid.length ? valid : [PLACEHOLDER_IMAGE];
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    })[ch]);
+  }
+
+  function showToast(message) {
+    const toast = $("toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+  }
+
+  function buildCategories() {
+    const holder = $("category-filters");
+    if (!holder) return;
+    const categories = [...new Set(productosData.map(getProductCategory).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, "es"));
+
+    holder.innerHTML = "";
+    [["todos", "Todos"], ...categories.map(c => [normalizeText(c), c])].forEach(([value, label]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "category-chip" + (activeCategory === value ? " active" : "");
+      button.dataset.category = value;
+      button.textContent = label;
+      holder.appendChild(button);
+    });
+  }
+
+  function getVisibleProducts() {
+    const term = normalizeText($("search-input")?.value);
+    const sort = $("sort-select")?.value || "featured";
+
+    let list = productosData.filter(product => {
+      const category = normalizeText(getProductCategory(product));
+      const haystack = normalizeText([
+        getProductName(product),
+        getProductDescription(product),
+        getProductCategory(product)
+      ].join(" "));
+      return (activeCategory === "todos" || category === activeCategory) &&
+             (!term || haystack.includes(term));
+    });
+
+    if (sort === "price-asc") {
+      list.sort((a, b) => parsePriceNumber(getProductPrice(a)) - parsePriceNumber(getProductPrice(b)));
+    } else if (sort === "price-desc") {
+      list.sort((a, b) => parsePriceNumber(getProductPrice(b)) - parsePriceNumber(getProductPrice(a)));
+    } else if (sort === "name") {
+      list.sort((a, b) => getProductName(a).localeCompare(getProductName(b), "es"));
+    }
+    return list;
+  }
+
+  function renderProducts() {
+    const grid = $("product-grid");
+    if (!grid) return;
+
+    const products = getVisibleProducts();
+    $("product-count").textContent = `${products.length} producto${products.length === 1 ? "" : "s"}`;
+    $("active-filter-label").textContent =
+      activeCategory === "todos" ? "" : `Categoría: ${getProductCategory(products[0] || {}) || ""}`;
+
+    if (!products.length) {
+      grid.innerHTML = '<div class="loader-wrap" style="grid-column:1/-1"><p>No encontramos productos con esos filtros.</p></div>';
+      return;
+    }
+
+    grid.innerHTML = products.map(product => {
+      const originalIndex = productosData.indexOf(product);
+      const id = getProductId(product, originalIndex);
+      const name = getProductName(product);
+      const description = getProductDescription(product);
+      const category = getProductCategory(product);
+      const price = parsePriceNumber(getProductPrice(product));
+      const oldPrice = parsePriceNumber(getProductOldPrice(product));
+      const discount = getProductDiscount(product);
+      const images = getProductImages(product);
+
+      return `
+        <article class="product-card" data-product-id="${escapeHTML(id)}">
+          <div class="card-media">
+            <img class="main-product-image" src="${escapeHTML(images[0])}" alt="${escapeHTML(name)}" loading="lazy">
+            <span class="card-badge">${escapeHTML(category)}</span>
+            ${discount ? `<span class="discount-tag">${escapeHTML(discount)}</span>` : ""}
+          </div>
+          ${images.length > 1 ? `
+            <div class="thumb-gallery">
+              ${images.map((src, i) => `
+                <button class="thumb-btn ${i === 0 ? "active" : ""}" type="button"
+                  data-image="${escapeHTML(src)}" aria-label="Ver imagen ${i + 1} de ${escapeHTML(name)}">
+                  <img src="${escapeHTML(src)}" alt="" loading="lazy">
+                </button>`).join("")}
+            </div>` : ""}
+          <div class="card-body">
+            <h3 class="card-title">${escapeHTML(name)}</h3>
+            <p class="card-desc">${escapeHTML(description || "Pieza seleccionada de nuestra colección.")}</p>
+            <div class="card-footer">
+              <div class="price-box">
+                ${oldPrice > price && price > 0 ? `<span class="price-old">${money(oldPrice)}</span>` : ""}
+                <span class="price-current">${price ? money(price) : "Consultar"}</span>
+              </div>
+              <button class="add-to-cart-btn" type="button" data-add="${escapeHTML(id)}">
+                <i class="fa-solid fa-bag-shopping"></i> Agregar al pedido
+              </button>
+            </div>
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  function findProductById(id) {
+    return productosData.find((p, idx) => String(getProductId(p, idx)) === String(id));
+  }
+
+  function addToCart(id) {
+    const product = findProductById(id);
+    if (!product) return showToast("No se pudo encontrar el producto.");
+
+    const index = productosData.indexOf(product);
+    const productId = getProductId(product, index);
+    const existing = cart.find(item => item.id === productId);
+
+    if (existing) {
+      existing.qty = Math.min(99, existing.qty + 1);
+    } else {
+      cart.push({
+        id: productId,
+        name: getProductName(product),
+        price: parsePriceNumber(getProductPrice(product)),
+        image: getProductImages(product)[0],
+        qty: 1
+      });
+    }
+    saveCart();
+    renderCart();
+    showToast("Producto agregado al pedido.");
+  }
+
+  function updateQuantity(id, delta) {
+    const item = cart.find(entry => entry.id === id);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(entry => entry.id !== id);
+    else item.qty = Math.min(99, item.qty);
+    saveCart();
+    renderCart();
+  }
+
+  function renderCart() {
+    const items = $("cart-items");
+    const badge = $("cart-badge");
+    const totalEl = $("cart-total-price");
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+    if (badge) badge.textContent = totalQty;
+    if (totalEl) totalEl.textContent = money(total);
+    if (!items) return;
+
+    if (!cart.length) {
+      items.innerHTML = '<div class="loader-wrap"><i class="fa-solid fa-bag-shopping" style="font-size:26px;margin-bottom:12px;"></i><p>Tu pedido está vacío.</p></div>';
+      return;
+    }
+
+    items.innerHTML = cart.map(item => `
+      <div class="cart-item-row">
+        <img src="${escapeHTML(item.image || PLACEHOLDER_IMAGE)}" alt="${escapeHTML(item.name)}">
+        <div>
+          <div class="cart-item-title">${escapeHTML(item.name)}</div>
+          <div class="cart-item-price">${item.price ? money(item.price) : "Consultar"}</div>
+          <div class="qty-controls">
+            <button type="button" data-qty="${escapeHTML(item.id)}" data-delta="-1" aria-label="Disminuir cantidad">−</button>
+            <span>${item.qty}</span>
+            <button type="button" data-qty="${escapeHTML(item.id)}" data-delta="1" aria-label="Aumentar cantidad">+</button>
+          </div>
+        </div>
+        <button type="button" class="close-drawer-btn" data-remove="${escapeHTML(item.id)}" aria-label="Eliminar producto">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>`).join("");
+  }
+
+  function openCart() {
+    $("cart-modal")?.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeCart() {
+    $("cart-modal")?.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+
+  function submitOrder(event) {
+    event.preventDefault();
+    if (!cart.length) return showToast("Agrega al menos un producto antes de confirmar.");
+
+    const name = $("client-name").value.trim();
+    const location = $("client-location").value.trim();
+    const phone = $("client-phone").value.trim();
+    const notes = $("client-notes").value.trim();
+    if (!name || !location) return showToast("Completa tu nombre y dirección de envío.");
+
+    const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const lines = [
+      "Hola Rosewood 👋",
+      "Quiero confirmar el siguiente pedido:",
+      "",
+      ...cart.map(item => `• ${item.name} × ${item.qty} — ${item.price ? money(item.price * item.qty) : "Precio a consultar"}`),
+      "",
+      `Subtotal estimado: ${money(total)}`,
+      "",
+      `Nombre: ${name}`,
+      `Ciudad / Dirección: ${location}`,
+      phone ? `Teléfono: ${phone}` : "",
+      notes ? `Notas: ${notes}` : ""
+    ].filter(Boolean);
+
+    const url = `https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(lines.join("\n"))}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function finishCatalogLoad() {
+    $("loader")?.remove();
+    buildCategories();
+    renderProducts();
+  }
+
+  window.handleSheetResponse = function(response) {
+    try {
+      if (!response?.table?.cols || !response?.table?.rows) {
+        throw new Error("Estructura de datos inválida.");
+      }
+
+      const cols = response.table.cols.map(c => c ? (c.label || c.id || "") : "");
+      productosData = response.table.rows.map((row, idx) => {
+        const item = {};
+        (row.c || []).forEach((cell, i) => {
+          const key = cols[i] ? cols[i].trim() : `col_${i}`;
+          item[key] = cell ? (cell.f !== undefined ? cell.f : (cell.v !== undefined ? cell.v : "")) : "";
+        });
+        if (!item.id && !item.codigo) item.id = `prod_${idx}`;
+        return item;
+      }).filter(p => getProductName(p) || getProductPrice(p));
+
+      finishCatalogLoad();
+    } catch (error) {
+      console.error("Error procesando Google Sheets:", error);
+      showCatalogError("No pudimos procesar el catálogo.");
+    }
+  };
+
+  function showCatalogError(message) {
+    const loader = $("loader");
+    if (loader) {
+      loader.innerHTML = `<p>${escapeHTML(message)}</p><p style="margin-top:8px">Intenta recargar la página.</p>`;
+    }
+  }
+
+  function loadCatalog() {
+    // Google Visualization API response is JSONP and calls handleSheetResponse.
+    const script = document.createElement("script");
+    script.src =
+      `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SPREADSHEET_ID)}/gviz/tq?tqx=out:json;responseHandler:handleSheetResponse`;
+    script.async = true;
+    script.onerror = () => showCatalogError("No se pudo conectar con Google Sheets.");
+    document.head.appendChild(script);
+
+    setTimeout(() => {
+      if (!productosData.length && $("loader")) {
+        showCatalogError("El catálogo está tardando demasiado en responder.");
+      }
+    }, 12000);
+  }
+
+  document.addEventListener("click", event => {
+    const add = event.target.closest("[data-add]");
+    if (add) return addToCart(add.dataset.add);
+
+    const thumb = event.target.closest(".thumb-btn");
+    if (thumb) {
+      const card = thumb.closest(".product-card");
+      const main = card?.querySelector(".main-product-image");
+      if (main) main.src = thumb.dataset.image;
+      card?.querySelectorAll(".thumb-btn").forEach(btn => btn.classList.toggle("active", btn === thumb));
+      return;
+    }
+
+    const qty = event.target.closest("[data-qty]");
+    if (qty) return updateQuantity(qty.dataset.qty, Number(qty.dataset.delta));
+
+    const remove = event.target.closest("[data-remove]");
+    if (remove) {
+      cart = cart.filter(item => item.id !== remove.dataset.remove);
+      saveCart();
+      renderCart();
+      return;
+    }
+
+    const category = event.target.closest(".category-chip");
+    if (category) {
+      activeCategory = category.dataset.category;
+      buildCategories();
+      renderProducts();
+    }
+  });
+
+  $("open-cart")?.addEventListener("click", openCart);
+  $("close-cart")?.addEventListener("click", closeCart);
+  $("cart-modal")?.addEventListener("click", e => { if (e.target === $("cart-modal")) closeCart(); });
+  $("search-input")?.addEventListener("input", renderProducts);
+  $("sort-select")?.addEventListener("change", renderProducts);
+  $("order-form")?.addEventListener("submit", submitOrder);
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeCart(); });
+
+  const year = $("year");
+  if (year) year.textContent = new Date().getFullYear();
+
+  renderCart();
+  loadCatalog();
+})();
+</script>
+</body>
+</html>
